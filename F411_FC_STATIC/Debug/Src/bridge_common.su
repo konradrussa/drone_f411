@@ -1,6 +1,0 @@
-../Src/bridge_common.c:17:6:bridge_validate_data	24	static
-../Src/bridge_common.c:28:7:bridge_format_string	32	static
-../Src/bridge_common.c:44:20:bridge_get_transmit_sigint	4	static
-../Src/bridge_common.c:48:20:bridge_get_receive_sigint	4	static
-../Src/bridge_common.c:52:20:bridge_get_space	4	static
-../Src/bridge_common.c:56:20:bridge_get_semicolon	4	static

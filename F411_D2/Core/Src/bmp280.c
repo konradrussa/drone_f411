@@ -15,6 +15,7 @@ I2C_HandleTypeDef *bmp_i2c;
 
 /*! Variable that holds the I2C device address or SPI chip selection */
 static uint8_t dev_addr;
+struct bmp2_status status;
 
 static BMP280_t bmp;
 
@@ -65,13 +66,12 @@ int8_t bmp280_get_data() {
 	/* Overwrite the desired settings */
 	bmp.result_data = BMP2_E_NULL_PTR;
 	/* Read pressure and temperature data */
-	struct bmp2_status status;
 	bmp.result_data = bmp2_get_status(&status, &bmp.bmp);
 	if(BMP2_OK != bmp.result_data) {
 		return bmp.result_data;
 	}
 	if (status.measuring == BMP2_MEAS_DONE) {
-		/* Delay between measurements */
+		/* Delay between measurements */ //FIXME alternated sensing
 		bmp.bmp.delay_us((uint32_t) bmp.meas_time / 1000,
 				&bmp.bmp.intf_ptr); //us to ms
 		/* Read compensated data */

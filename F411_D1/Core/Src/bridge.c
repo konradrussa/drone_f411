@@ -53,9 +53,11 @@ static void bridge_rc_motor_rx_callback(UART_HandleTypeDef *huart) {
 		free(fc_bridge.port->data_in); // deallocate memory
 	}
 	// TODO 1 get radio data from queues
+	fc_bridge.port->data_out = bridge_get_queues_data();
 
 	// TODO process Servo channel GEAR
 	HAL_StatusTypeDef status_transmit = fc_bridge.port->transmit(); // send radio data of motors to flight controller D2
+	free(fc_bridge.port->data_out);
 	if (HAL_OK != status_transmit) {
 		raise(bridge_get_transmit_sigint());
 	}
@@ -65,26 +67,34 @@ static void bridge_rc_motor_rx_callback(UART_HandleTypeDef *huart) {
 	}
 }
 
-void bridge_get_queues_data() {
+char* bridge_get_queues_data() {
 	uint32_t data;
+	char *uart_data = (char*) malloc(BRIDGE_DATA_SIZE);
 	if (queue_data_available(get_throttle_queue_rc())) {
 		queue_dequeue(get_throttle_queue_rc(), &data);
+		strcat(uart_data, (char*) data);
 	}
 	if (queue_data_available(get_pitch_queue_rc())) {
 		queue_dequeue(get_pitch_queue_rc(), &data);
+		strcat(uart_data, (char*) data);
 	}
 	if (queue_data_available(get_roll_queue_rc())) {
 		queue_dequeue(get_roll_queue_rc(), &data);
+		strcat(uart_data, (char*) data);
 	}
 	if (queue_data_available(get_yaw_queue_rc())) {
 		queue_dequeue(get_yaw_queue_rc(), &data);
+		strcat(uart_data, (char*) data);
 	}
 	if (queue_data_available(get_gear_queue_rc())) {
 		queue_dequeue(get_gear_queue_rc(), &data);
+		strcat(uart_data, (char*) data);
 	}
 	if (queue_data_available(get_speed_queue_rc())) {
 		queue_dequeue(get_speed_queue_rc(), &data);
+		strcat(uart_data, (char*) data);
 	}
+	return uart_data;
 }
 
 HAL_StatusTypeDef bridge_init(UART_HandleTypeDef *uart, I2C_HandleTypeDef *i2c) {
@@ -100,7 +110,7 @@ HAL_StatusTypeDef bridge_init(UART_HandleTypeDef *uart, I2C_HandleTypeDef *i2c) 
 
 HAL_StatusTypeDef bridge_drone_arm() {
 	// TODO signal to arm escs, get radio data from RC, sent TPRY+Gear+Speed
-	fc_bridge.port->data_out = "1097;1919;1919;1508;1919;1111;";
+	fc_bridge.port->data_out = "1100;1100;1923;1098;1919;1919;";
 	HAL_StatusTypeDef status_transmit = fc_bridge.port->transmit(); //send radio data to flight controller
 	if (HAL_OK != status_transmit) {
 		return status_transmit;

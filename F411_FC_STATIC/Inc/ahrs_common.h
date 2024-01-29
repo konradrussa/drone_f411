@@ -14,7 +14,7 @@
 #include "quaternion.h"
 
 typedef struct AhrsState {
-	Quaternion_t q;    		// Current altitude
+	Quaternion_t q;    		// Current attitude
 	EulerAngle_t ea;        // Current angle rate @ body frame
 } AhrsState_t;
 

@@ -1,6 +1,0 @@
-../Core/Src/bmp280.c:21:8:bmp280_init	5
-../Core/Src/bmp280.c:63:8:bmp280_get_data	3
-../Core/Src/bmp280.c:83:8:bmp280_i2c_read	3
-../Core/Src/bmp280.c:101:8:bmp280_i2c_write	2
-../Core/Src/bmp280.c:117:6:bmp280_delay_ms	1
-../Core/Src/bmp280.c:122:18:get_bmp	1

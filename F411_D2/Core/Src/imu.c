@@ -98,7 +98,7 @@ int8_t imu_init(TIM_HandleTypeDef *htim, I2C_HandleTypeDef *iic) {
 	}
 
 	uint8_t bmm150_data_start = BMM150_REG_DATA_X_LSB;
-	bmi_ref.aux_cfg.aux_odr = BMI160_AUX_ODR_100HZ;
+	bmi_ref.aux_cfg.aux_odr = BMI160_AUX_ODR_400HZ;
 	imu.result = bmi160_set_aux_auto_mode(&bmm150_data_start, &bmi_ref);
 	if (BMI160_OK != imu.result) {
 		return imu.result;

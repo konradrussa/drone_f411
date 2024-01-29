@@ -1,7 +1,0 @@
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/queue.c:9:20:queue_store_data	32	static
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/queue.c:13:24:queue_get_data	24	static
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/queue.c:17:20:queue_full	16	static
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/queue.c:21:20:queue_empty	16	static
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/queue.c:25:13:queue_data_available	16	static
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/queue.c:29:6:queue_enqueue	16	static
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/queue.c:39:6:queue_dequeue	16	static

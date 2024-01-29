@@ -30,7 +30,7 @@ static void rc_control_defaults(RemoteControl_t *control, TIM_TypeDef *timer,
 	control->fall = 0;
 }
 
-//65535 16 bit 4 channels 4 values one by one
+//65535 16 bit 6 channels 4 values one by one for each channel
 void rc_calculate(uint32_t capturedValue, RemoteControl_t *control,
 		TIM_HandleTypeDef *htim, Queue_t *queue) {
 	bool rising_edge = HAL_GPIO_ReadPin(control->rc_channel_port,

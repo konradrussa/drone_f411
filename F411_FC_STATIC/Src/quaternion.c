@@ -34,7 +34,7 @@ void quaternion_multiply(const Quaternion_t *qa, const Quaternion_t *qb,
 }
 
 /*
- * This function calculate the vector rotaton via quatornion
+ * This function calculate the vector rotaton via quaternion
  * qr - rotation quaternion
  * qv - vector to rotate (qv->q0 = 0)
  * qo - output vector (qo->q0 = 0)

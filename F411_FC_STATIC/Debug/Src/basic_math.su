@@ -1,5 +1,0 @@
-../Src/basic_math.c:3:16:math_max	16	static
-../Src/basic_math.c:7:16:math_min	16	static
-../Src/basic_math.c:11:16:math_abs	16	static
-../Src/basic_math.c:15:7:math_sqrt	24	static
-../Src/basic_math.c:36:7:math_inv_sqrt	32	static

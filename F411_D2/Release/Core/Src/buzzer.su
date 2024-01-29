@@ -1,5 +1,0 @@
-../Core/Src/buzzer.c:25:13:buzzer_sound	0	static
-../Core/Src/buzzer.c:15:19:buzzer_init	0	static
-../Core/Src/buzzer.c:21:19:buzzer_deinit	0	static
-../Core/Src/buzzer.c:51:6:buzzer_start	8	static
-../Core/Src/buzzer.c:58:6:buzzer_stop	0	static

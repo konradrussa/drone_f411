@@ -1,7 +1,0 @@
-../Core/Src/remote_control.c:21:13:rc_control_defaults	1
-../Core/Src/remote_control.c:34:6:rc_calculate	12
-../Core/Src/remote_control.c:68:6:rc_throttle_gear_speed_callback	5
-../Core/Src/remote_control.c:90:6:rc_pitch_callback	1
-../Core/Src/remote_control.c:95:6:rc_roll_callback	1
-../Core/Src/remote_control.c:100:6:rc_yaw_callback	1
-../Core/Src/remote_control.c:105:19:rc_init_all	11

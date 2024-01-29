@@ -1,5 +1,0 @@
-../Core/Src/ultrasonic.c:28:26:get_data	0	static
-../Core/Src/ultrasonic.c:36:8:ultrasonic_i2c_write	40	dynamic
-../Core/Src/ultrasonic.c:54:8:ultrasonic_i2c_read	40	static
-../Core/Src/ultrasonic.c:75:6:ultrasonic_init	8	static
-../Core/Src/ultrasonic.c:87:9:ultrasonic_get_data	16	static

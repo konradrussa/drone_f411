@@ -1,6 +1,0 @@
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/bridge_common.c:17:6:bridge_validate_data	3
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/bridge_common.c:28:7:bridge_format_string	6
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/bridge_common.c:44:20:bridge_get_transmit_sigint	1
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/bridge_common.c:48:20:bridge_get_receive_sigint	1
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/bridge_common.c:52:20:bridge_get_space	1
-D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src/bridge_common.c:56:20:bridge_get_semicolon	1
