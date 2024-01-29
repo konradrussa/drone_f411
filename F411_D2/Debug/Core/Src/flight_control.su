@@ -1,0 +1,2 @@
+../Core/Src/flight_control.c:16:6:flight_imu_calibration	8	static
+../Core/Src/flight_control.c:21:6:flight_ahrs	16	static

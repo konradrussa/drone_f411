@@ -1,0 +1,5 @@
+../Core/Src/gps.c:108:13:gps_parseNMEA	24	static
+../Core/Src/gps.c:309:6:gps_init	0	static
+../Core/Src/gps.c:320:19:gps_config_ubx	336	static
+../Core/Src/gps.c:385:6:gps_get_data	72	static
+../Core/Src/gps.c:418:17:get_gps	0	static

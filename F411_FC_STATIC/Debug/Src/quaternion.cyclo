@@ -1,0 +1,7 @@
+../Src/quaternion.c:7:6:quaternion_normalize	1
+../Src/quaternion.c:22:6:quaternion_multiply	1
+../Src/quaternion.c:43:6:quaternion_rotate	1
+../Src/quaternion.c:73:6:quaternion_conjugate	1
+../Src/quaternion.c:80:6:quaternion_scale	1
+../Src/quaternion.c:87:6:quaternion_add	1
+../Src/quaternion.c:98:6:quaternion_to_euler	1

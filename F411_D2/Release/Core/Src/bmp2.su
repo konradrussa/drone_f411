@@ -1,0 +1,14 @@
+../Core/Src/bmp2.c:588:15:null_ptr_check	0	static
+../Core/Src/bmp2.c:255:8:bmp2_get_regs	16	static
+../Core/Src/bmp2.c:224:8:bmp2_init	40	static
+../Core/Src/bmp2.c:289:8:bmp2_set_regs	32	static
+../Core/Src/bmp2.c:357:8:bmp2_soft_reset	24	static
+../Core/Src/bmp2.c:654:15:conf_sensor	32	static
+../Core/Src/bmp2.c:380:8:bmp2_get_config	16	static
+../Core/Src/bmp2.c:411:8:bmp2_set_config	0	static
+../Core/Src/bmp2.c:419:8:bmp2_get_status	16	static
+../Core/Src/bmp2.c:445:8:bmp2_get_power_mode	24	static
+../Core/Src/bmp2.c:468:8:bmp2_set_power_mode	0	static
+../Core/Src/bmp2.c:518:8:bmp2_compensate_data	56	static
+../Core/Src/bmp2.c:482:8:bmp2_get_sensor_data	40	static
+../Core/Src/bmp2.c:551:8:bmp2_compute_meas_time	80	static

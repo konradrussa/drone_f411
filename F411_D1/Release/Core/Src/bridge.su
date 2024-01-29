@@ -1,0 +1,9 @@
+../Core/Src/bridge.c:19:26:receive	0	static
+../Core/Src/bridge.c:13:26:transmit	16	static
+../Core/Src/bridge.c:46:13:bridge_rc_motor_rx_callback	16	static
+../Core/Src/bridge.c:24:20:bridge_signal_transmit_handler	8	static
+../Core/Src/bridge.c:35:20:bridge_signal_receive_handler	8	static
+../Core/Src/bridge.c:68:6:bridge_get_queues_data	16	static
+../Core/Src/bridge.c:90:19:bridge_init	16	static
+../Core/Src/bridge.c:101:19:bridge_drone_arm	8	static
+../Core/Src/bridge.c:111:19:bridge_transmit	16	static

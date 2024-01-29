@@ -1,0 +1,8 @@
+../Core/Src/bridge.c:20:26:receive	1
+../Core/Src/bridge.c:14:26:transmit	1
+../Core/Src/bridge.c:25:20:bridge_signal_transmit_handler	2
+../Core/Src/bridge.c:34:20:bridge_signal_receive_handler	2
+../Core/Src/bridge.c:54:13:bridge_fc_rx_callback	5
+../Core/Src/bridge.c:73:19:bridge_init	2
+../Core/Src/bridge.c:87:19:bridge_drone_arm	2
+../Core/Src/bridge.c:97:19:bridge_transmit	3

@@ -1,0 +1,6 @@
+../Core/Src/ultrasonic.c:28:26:get_data	1
+../Core/Src/ultrasonic.c:32:20:ultrasonic_i2c_check_busy	1
+../Core/Src/ultrasonic.c:36:8:ultrasonic_i2c_write	3
+../Core/Src/ultrasonic.c:54:8:ultrasonic_i2c_read	4
+../Core/Src/ultrasonic.c:75:6:ultrasonic_init	1
+../Core/Src/ultrasonic.c:87:9:ultrasonic_get_data	3
