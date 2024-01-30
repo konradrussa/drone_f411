@@ -1,6 +1,0 @@
-../Core/Src/imu.c:97:6:imu_delay_ms	0	static
-../Core/Src/imu.c:67:8:imu_i2c_read	40	static
-../Core/Src/imu.c:83:8:imu_i2c_write	24	dynamic
-../Core/Src/imu.c:17:8:imu_init	16	static
-../Core/Src/imu.c:52:8:imu_get_data	16	static
-../Core/Src/imu.c:101:15:get_imu	0	static

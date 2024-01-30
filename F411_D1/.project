@@ -31,9 +31,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Core/Static_Src</name>
+			<name>Static_Src</name>
 			<type>2</type>
-			<location>D:/BBB/stm32/workspace_1.13.2/F411_FC_STATIC/Src</location>
+			<location>D:/BBB/repo/stm_drone/drone_f411/F411_FC_STATIC/Src</location>
 		</link>
 	</linkedResources>
 </projectDescription>
