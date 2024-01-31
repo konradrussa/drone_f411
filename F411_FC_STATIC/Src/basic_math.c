@@ -18,7 +18,7 @@ float math_sqrt(float x) {
 		float x;
 	} u;
 	u.x = x;
-	u.i = (1 << 29) + (u.i >> 1) - (1 << 22);
+	u.i = (1 << 29) + (u.i >> 1) - (1 << 22); //initial guess number
 
 	// Two Babylonian Steps (simplified from:)
 	// u.x = 0.5f * (u.x + x/u.x);
@@ -32,7 +32,7 @@ float math_sqrt(float x) {
 //---------------------------------------------------------------------------------------------------
 // Fast inverse square-root
 // See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
-
+// fast form of 1/sqrt
 float math_inv_sqrt(float x) {
 	float halfx = 0.5f * x;
 	float y = x;
