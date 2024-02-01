@@ -5,7 +5,6 @@
 #include "basic_math.h"
 
 #define MAX_RAD    		3.14159 	//	180 degree
-#define EPSILON 		(1e-4)
 
 typedef struct Quaternion {
 	float q0;			//scalar part

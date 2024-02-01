@@ -14,9 +14,6 @@ static float throttle_s = 0.0, roll_s = 0.0, pitch_s = 0.0, yaw_s = 0.0,
 static Queue_t queues_rc[6];
 
 //constants
-const float geo_g = 9.80665;     	// geopotential gravity m/s^2
-const float mag_declination = 7.0; // positive degrees at location
-const float mag_field_strength = 50.378; // uT - mikro Tesla at location
 const float drone_center_mass = 4.0; // drone mass kg with 2 EDF, center mass 4 kg and 6 side rotors each 100g
 const float motor_mass = 0.1;
 const float l = 0.2; // 0.20 * 2 * sin(30) no-perpendicular distance to axes, Quad 500, 50 cm drone

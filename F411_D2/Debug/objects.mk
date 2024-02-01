@@ -5,5 +5,5 @@
 
 USER_OBJS :=
 
-LIBS := -lF411_FC_STATIC
+LIBS :=
 

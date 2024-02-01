@@ -67,32 +67,33 @@ static void bridge_rc_motor_rx_callback(UART_HandleTypeDef *huart) {
 	}
 }
 
+//TODO create bridge data out
 char* bridge_get_queues_data() {
 	uint32_t data;
 	char *uart_data = (char*) malloc(BRIDGE_DATA_SIZE);
 	if (queue_data_available(get_throttle_queue_rc())) {
 		queue_dequeue(get_throttle_queue_rc(), &data);
-		strcat(uart_data, (char*) data);
+		strcat(itoa(data, uart_data, 10), bridge_get_semicolon());
 	}
 	if (queue_data_available(get_pitch_queue_rc())) {
 		queue_dequeue(get_pitch_queue_rc(), &data);
-		strcat(uart_data, (char*) data);
+		strcat(itoa(data, uart_data, 10), bridge_get_semicolon());
 	}
 	if (queue_data_available(get_roll_queue_rc())) {
 		queue_dequeue(get_roll_queue_rc(), &data);
-		strcat(uart_data, (char*) data);
+		strcat(itoa(data, uart_data, 10), bridge_get_semicolon());
 	}
 	if (queue_data_available(get_yaw_queue_rc())) {
 		queue_dequeue(get_yaw_queue_rc(), &data);
-		strcat(uart_data, (char*) data);
+		strcat(itoa(data, uart_data, 10), bridge_get_semicolon());
 	}
 	if (queue_data_available(get_gear_queue_rc())) {
 		queue_dequeue(get_gear_queue_rc(), &data);
-		strcat(uart_data, (char*) data);
+		strcat(itoa(data, uart_data, 10), bridge_get_semicolon());
 	}
 	if (queue_data_available(get_speed_queue_rc())) {
 		queue_dequeue(get_speed_queue_rc(), &data);
-		strcat(uart_data, (char*) data);
+		strcat(itoa(data, uart_data, 10), bridge_get_semicolon());
 	}
 	return uart_data;
 }

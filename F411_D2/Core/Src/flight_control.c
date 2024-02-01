@@ -13,6 +13,8 @@
 AhrsState_t ahrsState;
 AxesRaw_t accel, gyro, mag;
 
+float compass_deg;
+
 void flight_imu_calibration() {
 	calibration();
 }
@@ -33,6 +35,7 @@ void flight_ahrs() {
 	mag.AXIS_Z = imu->mag_data[0].z;
 
 	drone_queue_control();
+	compass_deg = ahrs_get_longitudinal_direction();
 	ahrs_fusion_agm(&accel, &gyro, &mag, &ahrsState);
 	quaternion_to_euler(&ahrsState.q, &ahrsState.ea);
 }

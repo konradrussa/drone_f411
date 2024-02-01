@@ -12,6 +12,22 @@ inline int16_t math_abs(int16_t x) {
 	return x >= 0 ? x : -x;
 }
 
+inline bool math_rotation_matrix_in_range(int16_t det) {
+	return (det <= 1 + EPSILON && det >= 1 - EPSILON); // determinant for Rotation Matrix should be 1 +-epsilon
+}
+
+int16_t math_rotation_matrix_determinant(Matrix3D_t *matrix) {
+	return matrix->row0[0]
+			* (matrix->row1[1] * matrix->row2[2]
+					- matrix->row1[1] * matrix->row2[2])
+			- matrix->row0[1]
+					* (matrix->row1[0] * matrix->row2[2]
+							- matrix->row2[0] * matrix->row2[2])
+			+ matrix->row0[2]
+					* (matrix->row1[0] * matrix->row1[1]
+							- matrix->row2[0] * matrix->row2[1]);
+}
+
 float math_sqrt(float x) {
 	union {
 		int i;

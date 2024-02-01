@@ -168,18 +168,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
 //	bridge_drone_arm();
-//	uint32_t last_tick = 0;
+	uint32_t last_tick = 0;
 	while (1) {
 //		if (get_imu()->running) { // RECOVERY MODE
 //			flight_recovery();
 //		}
 
-//		if((TIM4->CNT - last_tick) > 2000) {
-//			char* data = bridge_get_queues_data();
-//
-//			free(data);
-//		}
-//		last_tick = TIM4->CNT;
+		if((TIM4->CNT - last_tick) > 2000) {
+			char* data = bridge_get_queues_data();
+
+			free(data);
+		}
+		last_tick = TIM4->CNT;
 
 
 //		break;

@@ -33,12 +33,6 @@ typedef struct AxesWeightedAverage {
 	int priority;
 } AxesWeightedAverage_t;
 
-typedef struct Vector3D {
-	float x;
-	float y;
-	float z;
-} Vector3D_t;
-
 void ahrs_fusion_ag(AxesRaw_t *acc, AxesRaw_t *gyro, AhrsState_t *ahrs);
 Vector3D_t* ahrs_get_euler_derivatives(float phi, float theta, float p, float q,
 		float r);

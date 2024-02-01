@@ -1,4 +1,6 @@
 #include "ahrs.h"
+#include "env.h"
+#include "imu.h"
 
 // Sampling time of sensors
 const float SENSOR_SAMPLING_TIME = 0.00125; //800 Hz
@@ -8,6 +10,7 @@ extern float beta;
 extern const float COE_DPS_TO_RADPS;
 extern volatile float q0, q1, q2, q3;
 
+//Madgwick ahrs
 void ahrs_fusion_agm(AxesRaw_t *accel, AxesRaw_t *gyro, AxesRaw_t *mag,
 		AhrsState_t *ahrs) {
 
@@ -37,7 +40,7 @@ void ahrs_fusion_agm(AxesRaw_t *accel, AxesRaw_t *gyro, AxesRaw_t *mag,
 
 	mxf = (float) mag->AXIS_X * ((float) COE_DPS_TO_RADPS);
 	myf = (float) mag->AXIS_Y * ((float) COE_DPS_TO_RADPS);
-	mzf = -(float) mag->AXIS_Z * ((float) COE_DPS_TO_RADPS);// FIXME check sign and rotation direction
+	mzf = -(float) mag->AXIS_Z * ((float) COE_DPS_TO_RADPS); // FIXME check sign and rotation direction
 
 	// Rate of change of quaternion from gyroscope
 	qDot1 = (-q1 * gxf - q2 * gyf - q3 * gxf) * 0.5f;
@@ -166,4 +169,19 @@ void ahrs_fusion_agm(AxesRaw_t *accel, AxesRaw_t *gyro, AxesRaw_t *mag,
 	ahrs->q.q1 = q1;
 	ahrs->q.q2 = q2;
 	ahrs->q.q3 = q3;
+}
+
+//TODO check
+float ahrs_get_longitudinal_direction() {
+	IMU_t *imu = get_imu();
+	const float *delta_m = get_magnetic_declination();
+	float longi_degree = atan2f(imu->mag_data[0].x - *delta_m,
+			imu->mag_data[0].y - *delta_m); // tan(y/x)
+	if (longi_degree < 0) {
+		longi_degree += 2 * M_PI;
+	}
+	if (longi_degree > 2 * M_PI) {
+		longi_degree -= 2 * M_PI;
+	}
+	return longi_degree * 180 / M_PI;
 }

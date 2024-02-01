@@ -30,6 +30,6 @@ Queue_t* get_roll_queue_rc(void);
 Queue_t* get_yaw_queue_rc(void);
 Queue_t* get_gear_queue_rc(void);
 Queue_t* get_speed_queue_rc(void);
-Queue_t* get_queues_rc();
+Queue_t* get_queues_rc(void);
 
 #endif /* DRONE_H_ */

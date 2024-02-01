@@ -4,6 +4,7 @@
 "./Src/bmi160.o"
 "./Src/bridge_common.o"
 "./Src/drone.o"
+"./Src/env.o"
 "./Src/init.o"
 "./Src/quaternion.o"
 "./Src/queue.o"

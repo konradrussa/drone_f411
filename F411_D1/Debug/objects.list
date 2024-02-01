@@ -41,6 +41,7 @@
 "./Static_Src/bmi160.o"
 "./Static_Src/bridge_common.o"
 "./Static_Src/drone.o"
+"./Static_Src/env.o"
 "./Static_Src/init.o"
 "./Static_Src/quaternion.o"
 "./Static_Src/queue.o"
