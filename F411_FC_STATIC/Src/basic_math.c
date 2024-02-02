@@ -12,11 +12,11 @@ inline int16_t math_abs(int16_t x) {
 	return x >= 0 ? x : -x;
 }
 
-inline bool math_rotation_matrix_in_range(int16_t det) {
-	return (det <= 1 + EPSILON && det >= 1 - EPSILON); // determinant for Rotation Matrix should be 1 +-epsilon
+inline bool math_rotation_matrix_in_range(float det) {
+	return (det <= 1 + EPSILON_4 && det >= 1 - EPSILON_4); // determinant for Rotation Matrix should be 1 +-epsilon
 }
 
-int16_t math_rotation_matrix_determinant(Matrix3D_t *matrix) {
+float math_rotation_matrix_determinant(const Matrix3D_t *matrix) {
 	return matrix->row0[0]
 			* (matrix->row1[1] * matrix->row2[2]
 					- matrix->row1[1] * matrix->row2[2])
@@ -57,4 +57,79 @@ float math_inv_sqrt(float x) {
 	y = *(float*) &i;
 	y = y * (1.5f - (halfx * y * y));
 	return y;
+}
+
+// power method, matrix order 3 (3x3)
+void math_eigen(const Matrix3D_t *matrix, const Vector3D_t *vector, Eigen_t *eigen) {
+	float zmax = 0.0, emax = 0.0;
+	Vector3D_t vec_x = *vector;
+	Vector3D_t vec_z = { 0.0 };
+	Vector3D_t vec_e = { 0.0 };
+
+	do {
+		vec_z.x += matrix->row0[0] * vec_x.x;
+		vec_z.x += matrix->row0[1] * vec_x.y;
+		vec_z.x += matrix->row0[2] * vec_x.z;
+
+		vec_z.y += matrix->row1[0] * vec_x.x;
+		vec_z.y += matrix->row1[1] * vec_x.y;
+		vec_z.y += matrix->row1[2] * vec_x.z;
+
+		vec_z.z += matrix->row2[0] * vec_x.x;
+		vec_z.z += matrix->row2[1] * vec_x.y;
+		vec_z.z += matrix->row2[2] * vec_x.z;
+
+		zmax = fabs(vec_z.x);
+		if ((fabs(vec_z.y)) > zmax)
+			zmax = fabs(vec_z.y);
+		if ((fabs(vec_z.z)) > zmax)
+			zmax = fabs(vec_z.z);
+
+		vec_z.x /= zmax;
+		vec_z.y /= zmax;
+		vec_z.z /= zmax;
+
+		vec_e.x = fabs((fabs(vec_z.x)) - (fabs(vec_x.x)));
+		vec_e.y = fabs((fabs(vec_z.y)) - (fabs(vec_x.y)));
+		vec_e.z = fabs((fabs(vec_z.z)) - (fabs(vec_x.z)));
+
+		emax = vec_e.x;
+		if (vec_e.y > emax)
+			emax = vec_e.y;
+		if (vec_e.z > emax)
+			emax = vec_e.z;
+
+		vec_x.x = vec_z.x;
+		vec_x.y = vec_z.y;
+		vec_x.z = vec_z.z;
+
+	} while (emax > EPSILON_2);
+
+	eigen->eigenvector = vec_z;
+	eigen->eigenvalue = zmax;
+}
+
+//mean
+double math_mean(int length, double data, ...) {
+	va_list mean_list;
+	va_start(mean_list, data);
+	double sum = data;
+	for (int i = 0; i < length; i++) {
+		sum += va_arg(mean_list, double);
+	}
+	va_end(mean_list);
+	return sum / (double) length;
+}
+
+//standard deviation
+double math_stddev(int length, double mean, double data, ...) {
+	va_list stddev_list;
+	va_start(stddev_list, data);
+	double std = powf(data - mean, 2.0);
+	for (int i = 0; i < length; i++) {
+		double next_data = va_arg(stddev_list, double);
+		std += powf(next_data - mean, 2.0);
+	}
+	va_end(stddev_list);
+	return math_sqrt(std / (double) length);
 }

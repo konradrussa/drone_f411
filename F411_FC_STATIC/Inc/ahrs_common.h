@@ -8,7 +8,6 @@
 #ifndef AHRS_COMMON_H_
 #define AHRS_COMMON_H_
 
-#include <tgmath.h>
 #include <stdlib.h>
 #include "basic_math.h"
 #include "quaternion.h"
@@ -38,5 +37,6 @@ Vector3D_t* ahrs_get_euler_derivatives(float phi, float theta, float p, float q,
 		float r);
 Vector3D_t* ahrs_get_weighted_average(AxesWeightedAverage_t *avg1,
 		AxesWeightedAverage_t *avg2);
+Matrix3D_t* ahrs_get_rotation_matrix(float phi, float theta, float psi);
 
 #endif /* AHRS_COMMON_H_ */
