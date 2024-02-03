@@ -17,10 +17,11 @@
 #define DSHOT_SENT_SIZE 18
 
 typedef enum MOTOR_SIGNAL {
-	MOTOR_PWM = 0, MOTOR_PWM_EDF, MOTOR_ONESHOT42, MOTOR_DSHOT
+	MOTOR_PWM = 0, MOTOR_PWM_EDF, MOTOR_ONESHOT42, MOTOR_MULTISHOT, MOTOR_DSHOT
 } MOTOR_SIGNAL_e;
 
 // Oneshot42 42-84us 12kHz
+// Multishot 5us-25us
 // EDF PWM   1.4-2ms means 2ms delay
 
 typedef struct MOTOR {

@@ -19,6 +19,7 @@ const short DSHOT_FRAME_SIZE = 16;
 const short MOTOR_START_THROTTLE = 50;
 const short MOTOR_START_THROTTLE_EDF = 1400; //to 2000; 100-1 2000-1 1400 500Hz; 2000-1 1000-1 70 50Hz; duty 70%
 const short MOTOR_START_THROTTLE_ONESHOT42 = 4200; //to 8400
+const short MOTOR_START_THROTTLE_MULTISHOT = 500; //to 2500
 const short MOTOR_START_THROTTLE_DSHOT = 548; //0.25 * 2000 + 48 = 548
 
 static MOTOR_t M_L1;
@@ -170,6 +171,8 @@ const short get_start_throttle(MOTOR_t *motor) {
 		return MOTOR_START_THROTTLE_ONESHOT42;
 	} else if (MOTOR_PWM_EDF == motor->signal_type) {
 		return MOTOR_START_THROTTLE_EDF;
+	} else if (MOTOR_MULTISHOT == motor->signal_type) {
+		return MOTOR_START_THROTTLE_MULTISHOT;
 	} else if (MOTOR_DSHOT == motor->signal_type) {
 		return MOTOR_START_THROTTLE_DSHOT;
 	}
