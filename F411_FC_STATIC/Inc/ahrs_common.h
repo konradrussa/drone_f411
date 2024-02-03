@@ -32,11 +32,11 @@ typedef struct AxesWeightedAverage {
 	int priority;
 } AxesWeightedAverage_t;
 
-void ahrs_fusion_ag(AxesRaw_t *acc, AxesRaw_t *gyro, AhrsState_t *ahrs);
+void ahrs_fusion_ag(const AxesRaw_t *acc, const AxesRaw_t *gyro, AhrsState_t *ahrs);
 Vector3D_t* ahrs_get_euler_derivatives(float phi, float theta, float p, float q,
 		float r);
-Vector3D_t* ahrs_get_weighted_average(AxesWeightedAverage_t *avg1,
-		AxesWeightedAverage_t *avg2);
+Vector3D_t* ahrs_get_weighted_average(const AxesWeightedAverage_t *avg1,
+		const AxesWeightedAverage_t *avg2);
 Matrix3D_t* ahrs_get_rotation_matrix(float phi, float theta, float psi);
 
 #endif /* AHRS_COMMON_H_ */

@@ -10,8 +10,12 @@ extern float beta;
 extern const float COE_DPS_TO_RADPS;
 extern volatile float q0, q1, q2, q3;
 
-//Madgwick ahrs
-void ahrs_fusion_agm(AxesRaw_t *accel, AxesRaw_t *gyro, AxesRaw_t *mag,
+const float ahrs_get_sampling_time() {
+	return SENSOR_SAMPLING_TIME;
+}
+
+//Madgwick AHRS
+void ahrs_fusion_agm(const AxesRaw_t *accel, const AxesRaw_t *gyro, const AxesRaw_t *mag,
 		AhrsState_t *ahrs) {
 
 	float axf, ayf, azf, gxf, gyf, gzf, mxf, myf, mzf;

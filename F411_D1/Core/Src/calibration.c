@@ -8,6 +8,8 @@
 #include "calibration.h"
 
 IMU_Calibration_3D_t imuCalibration;
+Noise_t imu_noise = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+volatile bool prev_data_exists = false;
 
 static void calculateMaxima() {
 	imuCalibration.accel_calib.abs_x = math_max(
@@ -70,4 +72,23 @@ void calibration() {
 			imuCalibration.gyro_calib.min_z);
 
 	calculateMaxima();
+}
+
+void calculate_imu_noise() {
+	if (prev_data_exists) {
+		IMU_t *imu = get_imu();
+		//gather every tick measurement + cumulative drift
+		imu_noise.n_a_x += imu->accel_data[1].x - imu->accel_data[0].x;
+		imu_noise.n_a_y += imu->accel_data[1].y - imu->accel_data[0].y;
+		imu_noise.n_a_z += imu->accel_data[1].z - imu->accel_data[0].z;
+		imu_noise.n_g_x += imu->gyro_data[1].x - imu->gyro_data[0].x;
+		imu_noise.n_g_y += imu->gyro_data[1].y - imu->gyro_data[0].y;
+		imu_noise.n_g_z += imu->gyro_data[1].z - imu->gyro_data[0].z;
+	} else {
+		prev_data_exists = true;
+	}
+}
+
+void calculate_imu_stddev() {
+	//math_stddev(length, mean, data ...) * math.sqrt(ahrs_get_sampling_time()) // TODO check model /sqrt(Hz)
 }

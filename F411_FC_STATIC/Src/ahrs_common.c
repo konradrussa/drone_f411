@@ -26,10 +26,14 @@ float beta = 0.1f;		// 2 * proportional gain;
 static Vector3D_t euler_derivatives;
 static Vector3D_t weighted_average;
 
-static Matrix3D_t mat_product = { { 0.0 }, { 0.0 }, { 0.0 } }; 		//3x3
-static Matrix3D_t rot_mat_X = { { 0.0 }, { 0.0 }, { 0.0 } }; 		//3x3
-static Matrix3D_t rot_mat_Y = { { 0.0 }, { 0.0 }, { 0.0 } }; 		//3x3
-static Matrix3D_t rot_mat_Z = { { 0.0 }, { 0.0 }, { 0.0 } }; 		//3x3
+static Matrix3D_t mat_product = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
+		0.0, 0.0 } }; 		//3x3
+static Matrix3D_t rot_mat_X = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
+		0.0, 0.0 } }; //3x3
+static Matrix3D_t rot_mat_Y = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
+		0.0, 0.0 } }; 		//3x3
+static Matrix3D_t rot_mat_Z = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
+		0.0, 0.0 } }; 		//3x3
 
 static Eigen_t eigen;
 
@@ -74,8 +78,8 @@ static void ahrs_create_rotation_matrix_Z(float phi, float theta, float psi) {
 	rot_mat_Z.row2[2] = 1.0;
 }
 
-static void ahrs_multiply_rotation_matrix(Matrix3D_t *mat1, Matrix3D_t *mat2,
-		Matrix3D_t *mat_prod) {
+static void ahrs_multiply_rotation_matrix(const Matrix3D_t *mat1,
+		const Matrix3D_t *mat2, Matrix3D_t *mat_prod) {
 	//rows * cols
 	mat_prod->row0[0] = mat1->row0[0] * mat2->row0[0]
 			+ mat1->row0[1] * mat2->row1[0] + mat1->row0[2] * mat2->row2[0];
@@ -123,8 +127,8 @@ Vector3D_t* ahrs_get_euler_derivatives(float phi, float theta, float p, float q,
 	return &euler_derivatives;
 }
 
-Vector3D_t* ahrs_get_weighted_average(AxesWeightedAverage_t *avg1,
-		AxesWeightedAverage_t *avg2) {
+Vector3D_t* ahrs_get_weighted_average(const AxesWeightedAverage_t *avg1,
+		const AxesWeightedAverage_t *avg2) {
 	weighted_average.x = ahrs_weighted_average(avg1->axis->AXIS_X,
 			avg1->priority, avg2->axis->AXIS_X, avg2->priority);
 	weighted_average.y = ahrs_weighted_average(avg1->axis->AXIS_Y,
@@ -134,7 +138,9 @@ Vector3D_t* ahrs_get_weighted_average(AxesWeightedAverage_t *avg1,
 	return &weighted_average;
 }
 
-void ahrs_fusion_ag(AxesRaw_t *accel, AxesRaw_t *gyro, AhrsState_t *ahrs) {
+// Madgwick AHRS
+void ahrs_fusion_ag(const AxesRaw_t *accel, const AxesRaw_t *gyro,
+		AhrsState_t *ahrs) {
 	float axf, ayf, azf, gxf, gyf, gzf;
 	float norm;
 	float vx, vy, vz;

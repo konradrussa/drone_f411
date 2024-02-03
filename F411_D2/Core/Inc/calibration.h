@@ -22,6 +22,23 @@ typedef struct Calibration_3D {
 	int16_t abs_z;
 } Calibration_3D_t;
 
+typedef struct Noise_IMU {
+	float n_a_x;
+	float n_a_y;
+	float n_a_z;
+	float n_g_x;
+	float n_g_y;
+	float n_g_z;
+	float n_m_x;
+	float n_m_y;
+	float n_m_z;
+} Noise_IMU_t;
+
+typedef struct Noise_GPS {
+	float n_g_lat;
+	float n_g_lon;
+} Noise_GPS_t;
+
 typedef struct IMU_Calibration_3D {
 	Calibration_3D_t accel_calib;
 	Calibration_3D_t gyro_calib;
@@ -29,5 +46,9 @@ typedef struct IMU_Calibration_3D {
 } IMU_Calibration_3D_t;
 
 void calibration(void);
+void calculate_imu_noise(void);
+void calculate_imu_stddev(void);
+void calculate_gps_noise(void);
+void calculate_gps_stddev(void);
 
 #endif // CALIBRATION_H

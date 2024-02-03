@@ -115,7 +115,34 @@ void quaternion_to_euler(const Quaternion_t *qr, EulerAngle_t *ea) {
 	dq0q1 = dq0 * qr->q1;
 	dq2q3 = dq2 * qr->q3;
 
-	ea->pitch_x = atan2f(dq0q1 + dq2q3, q0q0 + q3q3 - q1q1 - q2q2);
-	ea->roll_y = asinf(dq0q2 - dq1q3);
+	ea->pitch_y = atan2f(dq0q1 + dq2q3, q0q0 + q3q3 - q1q1 - q2q2);
+	ea->roll_x = asinf(dq0q2 - dq1q3);
 	ea->yaw_z = atan2f(dq1q2 + dq0q3, q0q0 + q1q1 - q2q2 - q3q3);
+}
+
+//123_RPY
+//TODO check quaternion_from_euler and above quaternion_to_euler
+void quaternion_from_euler(const EulerAngle_t *ea, Quaternion_t *qo) {
+	// the roll,pitch,yaw angles are the Euler angles:
+	// 1. rotate inertial frame about global-Z for yaw
+	// 2. rotate resulting frame for pitch
+	// 3. rotate resulting frame for roll
+
+	float roll = ea->roll_x;
+	float pitch = ea->pitch_y;
+	float yaw = ea->yaw_z;
+
+	// Diebels formula 84, page 12.
+	roll /= 2.f;
+	pitch /= 2.f;
+	yaw /= 2.f;
+
+	qo->q0 = cosf(roll) * cosf(pitch) * cosf(yaw)
+			+ sinf(roll) * sinf(pitch) * sinf(yaw);
+	qo->q1 = -cosf(roll) * sinf(pitch) * sinf(yaw)
+			+ cosf(pitch) * cosf(yaw) * sinf(roll);
+	qo->q2 = cosf(roll) * cosf(yaw) * sinf(pitch)
+			+ sinf(roll) * cosf(pitch) * sinf(yaw);
+	qo->q3 = cosf(roll) * cosf(pitch) * sinf(yaw)
+			- sinf(roll) * cosf(yaw) * sinf(pitch);
 }

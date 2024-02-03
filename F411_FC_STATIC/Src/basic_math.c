@@ -12,8 +12,9 @@ inline int16_t math_abs(int16_t x) {
 	return x >= 0 ? x : -x;
 }
 
+// determinant for Rotation Matrix should be 1 +-epsilon
 inline bool math_rotation_matrix_in_range(float det) {
-	return (det <= 1 + EPSILON_4 && det >= 1 - EPSILON_4); // determinant for Rotation Matrix should be 1 +-epsilon
+	return (det <= 1 + EPSILON_4 && det >= 1 - EPSILON_4);
 }
 
 float math_rotation_matrix_determinant(const Matrix3D_t *matrix) {
@@ -60,13 +61,15 @@ float math_inv_sqrt(float x) {
 }
 
 // power method, matrix order 3 (3x3)
-void math_eigen(const Matrix3D_t *matrix, const Vector3D_t *vector, Eigen_t *eigen) {
+void math_eigen(const Matrix3D_t *matrix, const Vector3D_t *vector,
+		Eigen_t *eigen) {
 	float zmax = 0.0, emax = 0.0;
 	Vector3D_t vec_x = *vector;
-	Vector3D_t vec_z = { 0.0 };
-	Vector3D_t vec_e = { 0.0 };
+	Vector3D_t vec_z = { 0.0, 0.0, 0.0 };
+	Vector3D_t vec_e = { 0.0, 0.0, 0.0 };
 
 	do {
+		//dot product
 		vec_z.x += matrix->row0[0] * vec_x.x;
 		vec_z.x += matrix->row0[1] * vec_x.y;
 		vec_z.x += matrix->row0[2] * vec_x.z;
@@ -80,18 +83,18 @@ void math_eigen(const Matrix3D_t *matrix, const Vector3D_t *vector, Eigen_t *eig
 		vec_z.z += matrix->row2[2] * vec_x.z;
 
 		zmax = fabs(vec_z.x);
-		if ((fabs(vec_z.y)) > zmax)
+		if (fabs(vec_z.y) > zmax)
 			zmax = fabs(vec_z.y);
-		if ((fabs(vec_z.z)) > zmax)
+		if (fabs(vec_z.z) > zmax)
 			zmax = fabs(vec_z.z);
 
 		vec_z.x /= zmax;
 		vec_z.y /= zmax;
 		vec_z.z /= zmax;
 
-		vec_e.x = fabs((fabs(vec_z.x)) - (fabs(vec_x.x)));
-		vec_e.y = fabs((fabs(vec_z.y)) - (fabs(vec_x.y)));
-		vec_e.z = fabs((fabs(vec_z.z)) - (fabs(vec_x.z)));
+		vec_e.x = fabs(fabs(vec_z.x) - fabs(vec_x.x));
+		vec_e.y = fabs(fabs(vec_z.y) - fabs(vec_x.y));
+		vec_e.z = fabs(fabs(vec_z.z) - fabs(vec_x.z));
 
 		emax = vec_e.x;
 		if (vec_e.y > emax)
