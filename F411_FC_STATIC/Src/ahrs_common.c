@@ -23,7 +23,7 @@ volatile float exInt = 0, eyInt = 0, ezInt = 0;
 float ahrs_kp;
 float beta = 0.1f;		// 2 * proportional gain;
 
-static Vector3D_t euler_derivatives;
+static EulerAngle_t euler_derivatives;
 static Vector3D_t weighted_average;
 
 static Matrix3D_t mat_product = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
@@ -116,14 +116,14 @@ Matrix3D_t* ahrs_get_rotation_matrix(float phi, float theta, float psi) {
 	return &mat_product;
 }
 
-Vector3D_t* ahrs_get_euler_derivatives(float phi, float theta, float p, float q,
+EulerAngle_t* ahrs_get_euler_derivatives(float phi, float theta, float p, float q,
 		float r) {
 	//Euler forward method
-	euler_derivatives.x = 1.0 * p + sinf(phi) * tanf(theta) * q
-			+ cosf(phi) * tanf(theta) * r;
-	euler_derivatives.y = cosf(phi) * q - sinf(phi) * r;
-	euler_derivatives.z = sinf(phi) / cosf(theta) * q
-			+ cosf(phi) / cosf(theta) * r;
+	euler_derivatives.roll_x = 1.0 * p + sinf(phi) * tanf(theta) * q
+			+ cosf(phi) * tanf(theta) * r; //roll
+	euler_derivatives.pitch_y = cosf(phi) * q - sinf(phi) * r; //pitch
+	euler_derivatives.yaw_z = sinf(phi) / cosf(theta) * q
+			+ cosf(phi) / cosf(theta) * r; //yaw
 	return &euler_derivatives;
 }
 

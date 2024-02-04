@@ -20,11 +20,11 @@ typedef HAL_StatusTypeDef (*bridge_transmit_fptr_t)();
 typedef HAL_StatusTypeDef (*bridge_receive_fptr_t)();
 
 typedef struct BRIDGE_COMMON {
-	char *data_in;
-	char *data_out;
 	bridge_transmit_fptr_t transmit;
 	bridge_receive_fptr_t receive;
 	volatile sig_atomic_t signalStatusReceive, signalStatusTransmit;
+	char *data_in;
+	char *data_out;
 } BRIDGE_COMMON_t;
 
 bool bridge_validate_data(char *s, int size);

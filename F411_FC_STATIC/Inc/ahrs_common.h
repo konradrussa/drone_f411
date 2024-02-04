@@ -33,7 +33,7 @@ typedef struct AxesWeightedAverage {
 } AxesWeightedAverage_t;
 
 void ahrs_fusion_ag(const AxesRaw_t *acc, const AxesRaw_t *gyro, AhrsState_t *ahrs);
-Vector3D_t* ahrs_get_euler_derivatives(float phi, float theta, float p, float q,
+EulerAngle_t* ahrs_get_euler_derivatives(float phi, float theta, float p, float q,
 		float r);
 Vector3D_t* ahrs_get_weighted_average(const AxesWeightedAverage_t *avg1,
 		const AxesWeightedAverage_t *avg2);

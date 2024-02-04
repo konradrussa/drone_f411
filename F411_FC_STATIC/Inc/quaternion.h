@@ -4,17 +4,6 @@
 #include <assert.h>
 #include "basic_math.h"
 
-#define MAX_RAD    		3.14159 	//	180 degree
-
-typedef struct Quaternion {
-	float q0;			//scalar part
-	float q1, q2, q3;	//vector part
-} Quaternion_t;
-
-typedef struct EulerAngle {
-	float pitch_y, roll_x, yaw_z;
-} EulerAngle_t;
-
 void quaternion_normalize(Quaternion_t *q);
 void quaternion_multiply(const Quaternion_t *qa, const Quaternion_t *qb,
 		Quaternion_t *qo);

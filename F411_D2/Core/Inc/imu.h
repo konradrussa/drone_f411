@@ -18,12 +18,12 @@
 
 // BMI160 + BMM150
 typedef struct IMU {
-	struct bmi160_dev *bmi;
-	struct bmm150_dev *bmm;
 	struct bmi160_sensor_data accel_data[IMU_FRAMES];
 	struct bmi160_sensor_data gyro_data[IMU_FRAMES];
 	struct bmm150_mag_data mag_data[IMU_FRAMES];
 	int8_t result, result_data;
+	struct bmi160_dev *bmi;
+	struct bmm150_dev *bmm;
 } IMU_t;
 
 IMU_t* get_imu(void);

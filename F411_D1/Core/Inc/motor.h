@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <stdbool.h>
 #include <stdatomic.h>
+#include <stdlib.h>
 #include "init.h"
 #include "tim.h"
 
@@ -25,14 +26,14 @@ typedef enum MOTOR_SIGNAL {
 // EDF PWM   1.4-2ms means 2ms delay
 
 typedef struct MOTOR {
-	TIM_HandleTypeDef *pwm_tim;
 	uint32_t pwm_channel;
 	atomic_bool started;
 	atomic_bool dma_dshot;
-	uint32_t buffer[DSHOT_SENT_SIZE]; //FIXME change to pointer and init when chosen Dshot
 	volatile short motor_signal;
 	volatile sig_atomic_t motorSignalStatus;
 	MOTOR_SIGNAL_e signal_type;
+	TIM_HandleTypeDef *pwm_tim;
+	uint32_t *buffer; // buffer[DSHOT_SENT_SIZE] changed to pointer and DSHOT_SENT_SIZE allocated when chosen Dshot
 } MOTOR_t;
 
 MOTOR_t* get_M_L1(void);

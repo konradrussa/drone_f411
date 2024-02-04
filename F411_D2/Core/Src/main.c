@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "init.h"
+#include "timer.h"
 #include "imu.h"
 #include "gps.h"
 #include "bmp280.h"
@@ -56,6 +57,7 @@
 /* USER CODE BEGIN PV */
 
 uint32_t last_tick = 0, last_rtc = 0;
+uint32_t diff_us = 0, diff_sec = 0;
 
 /* USER CODE END PV */
 
@@ -153,17 +155,16 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-
+		last_tick = timer_tim4_us();
+		last_rtc = timer_rtc_sec();
 
 		//collect data
 		if (BMI160_OK != imu_get_data()) {
 			return get_imu()->result_data; // TODO handle error and do recovery
 		}
 
-		// TODO handle timers
-		last_tick = TIM4->CNT;
-		last_rtc = RTC->TR;
-
+		diff_us = timer_tim4_diff_us(last_tick);
+		diff_sec = timer_rtc_diff_sec(last_rtc);
 
 //		if (BMP2_OK != bmp280_get_data()) { // FIXME alternated sensing without while/delay
 //			return get_bmp()->result_data;

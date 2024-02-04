@@ -15,12 +15,12 @@
 #include "stm32f4xx.h"
 
 typedef struct SERVO {
-	TIM_HandleTypeDef *pwm_tim;
 	uint32_t pwm_channel;
 	uint16_t buffer[92];
 	atomic_bool cruise; //no volatile
 	atomic_bool dma_mode;
 	volatile sig_atomic_t servoSignalStatus;
+	TIM_HandleTypeDef *pwm_tim;
 } SERVO_t;
 
 SERVO_t* get_servo(void);

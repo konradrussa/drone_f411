@@ -8,3 +8,4 @@
 "./Src/init.o"
 "./Src/quaternion.o"
 "./Src/queue.o"
+"./Src/timer.o"

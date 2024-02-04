@@ -51,3 +51,4 @@
 "./Static_Src/init.o"
 "./Static_Src/quaternion.o"
 "./Static_Src/queue.o"
+"./Static_Src/timer.o"

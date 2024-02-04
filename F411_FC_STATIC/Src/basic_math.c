@@ -20,13 +20,13 @@ inline bool math_rotation_matrix_in_range(float det) {
 float math_rotation_matrix_determinant(const Matrix3D_t *matrix) {
 	return matrix->row0[0]
 			* (matrix->row1[1] * matrix->row2[2]
-					- matrix->row1[1] * matrix->row2[2])
+					- matrix->row2[1] * matrix->row1[2])
 			- matrix->row0[1]
 					* (matrix->row1[0] * matrix->row2[2]
-							- matrix->row2[0] * matrix->row2[2])
+							- matrix->row2[0] * matrix->row1[2])
 			+ matrix->row0[2]
-					* (matrix->row1[0] * matrix->row1[1]
-							- matrix->row2[0] * matrix->row2[1]);
+					* (matrix->row1[0] * matrix->row2[1]
+							- matrix->row2[0] * matrix->row1[1]);
 }
 
 float math_sqrt(float x) {

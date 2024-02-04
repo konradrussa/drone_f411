@@ -17,11 +17,11 @@
 
 // BMI160
 typedef struct IMU {
-	struct bmi160_dev *bmi;
 	struct bmi160_sensor_data accel_data[IMU_FRAMES];
 	struct bmi160_sensor_data gyro_data[IMU_FRAMES];
 	int8_t result, result_data;
 	volatile bool running;
+	struct bmi160_dev *bmi;
 } IMU_t;
 
 IMU_t* get_imu(void);

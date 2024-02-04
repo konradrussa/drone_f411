@@ -14,9 +14,9 @@
 #define BRIDGE_DATA_SIZE (30)
 
 typedef struct BRIDGE {
+	uint8_t rx_data[BRIDGE_DATA_SIZE];
 	UART_HandleTypeDef *fc_uart;
 	BRIDGE_COMMON_t *port;
-	uint8_t rx_data[BRIDGE_DATA_SIZE];
 } BRIDGE_t;
 
 HAL_StatusTypeDef bridge_init(UART_HandleTypeDef *uart);

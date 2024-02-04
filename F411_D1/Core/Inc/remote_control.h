@@ -13,9 +13,7 @@
 #include "drone.h"
 
 typedef struct RemoteControl {
-	TIM_TypeDef *rc_timer_instance;
 	uint32_t rc_channel;
-	GPIO_TypeDef *rc_channel_port;
 	uint16_t rc_channel_pin;
 	bool captured;
 	uint32_t rise;
@@ -24,6 +22,8 @@ typedef struct RemoteControl {
 	uint32_t frequency;
 	uint32_t width_us;
 	uint32_t frame_width_us;
+	GPIO_TypeDef *rc_channel_port;
+	TIM_TypeDef *rc_timer_instance;
 } RemoteControl_t;
 
 HAL_StatusTypeDef rc_init_all(void);
