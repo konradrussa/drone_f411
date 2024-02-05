@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (11.3.rel1)
+# Toolchain: GNU Tools for STM32 (12.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := F411_FC
+BUILD_ARTIFACT_NAME := F411_D2
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-F411_FC.elf \
+F411_D2.elf \
 
 MAP_FILES += \
-F411_FC.map \
+F411_D2.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-F411_FC.list \
+F411_D2.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: F411_FC.elf secondary-outputs
+main-build: F411_D2.elf secondary-outputs
 
 # Tool invocations
-F411_FC.elf F411_FC.map: $(OBJS) $(USER_OBJS) D:\BBB\repo\stm_drone\drone_f411\F411_D2\STM32F411CCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "F411_FC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\BBB\repo\stm_drone\drone_f411\F411_D2\STM32F411CCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F411_FC.map" -Wl,--gc-sections -static -L"D:\BBB\repo\stm_drone\drone_f411\F411_FC_STATIC\Release" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+F411_D2.elf F411_D2.map: $(OBJS) $(USER_OBJS) D:\BBB\repo\stm_drone\drone_f411\F411_D2\STM32F411CCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "F411_D2.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\BBB\repo\stm_drone\drone_f411\F411_D2\STM32F411CCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F411_D2.map" -Wl,--gc-sections -static -L"D:\BBB\repo\stm_drone\drone_f411\F411_FC_STATIC\Release" -L"D:\BBB\repo\stm_drone\drone_f411\F411_FC_TOOLKIT\Release" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-F411_FC.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "F411_FC.list"
+F411_D2.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "F411_D2.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) F411_FC.elf F411_FC.list F411_FC.map default.size.stdout
+	-$(RM) F411_D2.elf F411_D2.list F411_D2.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

@@ -4,13 +4,30 @@
  *  Created on: Dec 21, 2023
  *      Author: konrad
  */
+#include "flight_control_common.h"
 #include "flight_control.h"
 
 AhrsState_t ahrsState;
 AxesRaw_t accel, gyro;
 
-void flight_imu_calibration() {
-	calibration();
+void flight_imu_calibration(bool use_magnetometer) {
+	IMU_t *imu = get_imu();
+	AxesRaw_t accel_data[2], gyro_data[2];
+	accel_data[0].AXIS_X = imu->accel_data[0].x;
+	accel_data[0].AXIS_Y = imu->accel_data[0].y;
+	accel_data[0].AXIS_Z = imu->accel_data[0].z;
+	accel_data[1].AXIS_X = imu->accel_data[1].x;
+	accel_data[1].AXIS_Y = imu->accel_data[1].y;
+	accel_data[1].AXIS_Z = imu->accel_data[1].z;
+
+	gyro_data[0].AXIS_X = imu->gyro_data[0].x;
+	gyro_data[0].AXIS_Y = imu->gyro_data[0].y;
+	gyro_data[0].AXIS_Z = imu->gyro_data[0].z;
+	gyro_data[1].AXIS_X = imu->gyro_data[1].x;
+	gyro_data[1].AXIS_Y = imu->gyro_data[1].y;
+	gyro_data[1].AXIS_Z = imu->gyro_data[1].z;
+
+	calibration(accel_data, gyro_data, NULL, use_magnetometer);
 }
 
 void flight_ahrs() {
@@ -23,6 +40,7 @@ void flight_ahrs() {
 	gyro.AXIS_Y = imu->gyro_data[0].y;
 	gyro.AXIS_Z = imu->gyro_data[0].z;
 
+	flight_set_parameters();
 	ahrs_fusion_ag(&accel, &gyro, &ahrsState);
 	quaternion_to_euler(&ahrsState.q, &ahrsState.ea);
 }

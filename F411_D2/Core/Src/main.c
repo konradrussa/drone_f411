@@ -173,7 +173,7 @@ int main(void)
 //		ultrasonic_get_data(); // FIXME alternated sensing without while/delay
 
 // process data
-		flight_imu_calibration();
+		flight_imu_calibration(true);
 		flight_ahrs();
 
 //		int16_t bottom_distance = ultrasonic_get_data();

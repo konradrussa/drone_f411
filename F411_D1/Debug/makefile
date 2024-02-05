@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (11.3.rel1)
+# Toolchain: GNU Tools for STM32 (12.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -9,6 +9,7 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include Toolkit_Src/subdir.mk
 -include Static_Src/subdir.mk
 -include Drivers/STM32F4xx_HAL_Driver/Src/subdir.mk
 -include Core/Startup/subdir.mk
@@ -35,34 +36,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := F411_FC_MOTORS_RC
+BUILD_ARTIFACT_NAME := F411_D1
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-F411_FC_MOTORS_RC.elf \
+F411_D1.elf \
 
 MAP_FILES += \
-F411_FC_MOTORS_RC.map \
+F411_D1.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-F411_FC_MOTORS_RC.list \
+F411_D1.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: F411_FC_MOTORS_RC.elf secondary-outputs
+main-build: F411_D1.elf secondary-outputs
 
 # Tool invocations
-F411_FC_MOTORS_RC.elf F411_FC_MOTORS_RC.map: $(OBJS) $(USER_OBJS) D:\BBB\repo\stm_drone\drone_f411\F411_D1\STM32F411CCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "F411_FC_MOTORS_RC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\BBB\repo\stm_drone\drone_f411\F411_D1\STM32F411CCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F411_FC_MOTORS_RC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+F411_D1.elf F411_D1.map: $(OBJS) $(USER_OBJS) D:\BBB\repo\stm_drone\drone_f411\F411_D1\STM32F411CCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "F411_D1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\BBB\repo\stm_drone\drone_f411\F411_D1\STM32F411CCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F411_D1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -71,14 +72,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-F411_FC_MOTORS_RC.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "F411_FC_MOTORS_RC.list"
+F411_D1.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "F411_D1.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) F411_FC_MOTORS_RC.elf F411_FC_MOTORS_RC.list F411_FC_MOTORS_RC.map default.size.stdout
+	-$(RM) F411_D1.elf F411_D1.list F411_D1.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

@@ -35,5 +35,10 @@
 			<type>2</type>
 			<location>D:/BBB/repo/stm_drone/drone_f411/F411_FC_STATIC/Src</location>
 		</link>
+		<link>
+			<name>Toolkit_Src</name>
+			<type>2</type>
+			<location>D:/BBB/repo/stm_drone/drone_f411/F411_FC_TOOLKIT/Src</location>
+		</link>
 	</linkedResources>
 </projectDescription>

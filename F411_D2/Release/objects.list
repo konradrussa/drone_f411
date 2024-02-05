@@ -4,7 +4,6 @@
 "./Core/Src/bmp280.o"
 "./Core/Src/bridge.o"
 "./Core/Src/buzzer.o"
-"./Core/Src/calibration.o"
 "./Core/Src/flight_control.o"
 "./Core/Src/gpio.o"
 "./Core/Src/gps.o"

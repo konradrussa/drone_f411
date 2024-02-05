@@ -14,7 +14,7 @@
 #include "calibration.h"
 #include "remote_control.h"
 
-void flight_imu_calibration(void);
+void flight_imu_calibration(bool use_magnetometer);
 void flight_ahrs(void);
 void flight_recovery(void);
 

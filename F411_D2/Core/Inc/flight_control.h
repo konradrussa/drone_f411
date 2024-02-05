@@ -13,7 +13,7 @@
 #include "drone.h"
 #include "calibration.h"
 
-void flight_imu_calibration(void);
+void flight_imu_calibration(bool use_magnetometer);
 void flight_ahrs(void);
 
 #endif /* INC_FLIGHT_CONTROL_H_ */

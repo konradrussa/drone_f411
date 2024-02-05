@@ -12,10 +12,8 @@ extern const float SENSOR_SAMPLING_TIME;
 const float AHRS_KP_BIG = 10.0f;         //0.4 is tested, so slow in calibrated.
 const float AHRS_KP_NORM = 0.4f;
 const float AHRS_KI = 0.1f;
-const float COE_DPS_TO_RADPS = 0.0174533;
 
-const short MIN_THROTTLE_ONESHOT42 = 4210; //or 5200
-const short MIN_THROTTLE = 51;
+const float COE_DPS_TO_RADPS = 0.0174533;
 
 volatile float q0 = 1, q1 = 0, q2 = 0, q3 = 0;
 volatile float exInt = 0, eyInt = 0, ezInt = 0;
@@ -147,12 +145,6 @@ void ahrs_fusion_ag(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	float ex, ey, ez;
 	float halfT;
 	float q0q0, q0q1, q0q2, /*q0q3,*/q1q1, /*q1q2,*/q1q3, q2q2, q2q3, q3q3;
-
-	if (gTHR < MIN_THROTTLE_ONESHOT42) {
-		ahrs_kp = AHRS_KP_BIG;
-	} else {
-		ahrs_kp = AHRS_KP_NORM;
-	}
 
 	axf = (float) accel->AXIS_X;
 	ayf = (float) accel->AXIS_Y;

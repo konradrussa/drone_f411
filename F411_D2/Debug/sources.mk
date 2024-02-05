@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (11.3.rel1)
+# Toolchain: GNU Tools for STM32 (12.3.rel1)
 ################################################################################
 
 ELF_SRCS := 
@@ -26,4 +26,5 @@ Core/Src \
 Core/Startup \
 Drivers/STM32F4xx_HAL_Driver/Src \
 Static_Src \
+Toolkit_Src \
 

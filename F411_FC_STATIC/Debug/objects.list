@@ -5,6 +5,8 @@
 "./Src/bridge_common.o"
 "./Src/drone.o"
 "./Src/env.o"
+"./Src/flight_control_common.o"
 "./Src/init.o"
 "./Src/quaternion.o"
 "./Src/queue.o"
+"./Src/timer.o"
