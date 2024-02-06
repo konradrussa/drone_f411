@@ -10,7 +10,7 @@
 #define EPSILON_3 		(1e-3)
 #define EPSILON_4 		(1e-4)
 
-#define MAX_RAD    		3.14159 	//	180 degree
+#define MAX_RAD    		3.141592653589793238462643383279502884197 	//	180 degree
 
 typedef struct Vector3D {
 	float x;
@@ -45,6 +45,8 @@ float math_inv_sqrt(float x);
 int16_t math_abs(int16_t x);
 int16_t math_max(int16_t val1, int16_t val2);
 int16_t math_min(int16_t val1, int16_t val2);
+float sign0(float value);
+float sign1(float value);
 bool math_rotation_matrix_in_range(float det);
 float math_rotation_matrix_determinant(const Matrix3D_t *matrix);
 void math_eigen(const Matrix3D_t *matrix, const Vector3D_t *vector,

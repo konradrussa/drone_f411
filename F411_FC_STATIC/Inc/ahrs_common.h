@@ -28,8 +28,8 @@ typedef struct AxesRaw {
 } AxesRaw_t;
 
 typedef struct AxesWeightedAverage {
-	AxesRaw_t *axis;
 	int priority;
+	AxesRaw_t *axis;
 } AxesWeightedAverage_t;
 
 void ahrs_fusion_ag(const AxesRaw_t *acc, const AxesRaw_t *gyro, AhrsState_t *ahrs);

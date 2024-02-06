@@ -12,6 +12,22 @@ inline int16_t math_abs(int16_t x) {
 	return x >= 0 ? x : -x;
 }
 
+inline float sign1(float value) {
+	if (value > 1.0)
+		return 1.0;
+	if (value < -1.0)
+		return -1.0;
+	return value;
+}
+
+inline float sign0(float value) {
+	if (value > 0.0)
+		return 1.0;
+	if (value < 0.0)
+		return -1.0;
+	return 0.0;
+}
+
 // determinant for Rotation Matrix should be 1 +-epsilon
 inline bool math_rotation_matrix_in_range(float det) {
 	return (det <= 1 + EPSILON_4 && det >= 1 - EPSILON_4);
