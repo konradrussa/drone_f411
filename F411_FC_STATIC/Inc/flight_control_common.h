@@ -10,8 +10,8 @@
 
 #include <stdint.h>
 
-typedef void (*update_pid_fptr)(float input);
-typedef void (*update_sm_fptr)(float input);
+typedef void (*update_pid_fptr)(float setpoint, float input);
+typedef void (*update_sm_fptr)(float setpoint, float input);
 
 typedef struct PidVariable {
 	float prev_val;
@@ -33,9 +33,6 @@ typedef struct SmVariable {
 void flight_set_parameters(void);
 
 PidVariable_t* flight_get_pid_var(void);
-static void update_pid_fun(float input);
-
 SmVariable_t* flight_get_sm_var();
-static void update_sm_fun(float input);
 
 #endif /* FLIGHT_CONTROL_COMMON_H_ */

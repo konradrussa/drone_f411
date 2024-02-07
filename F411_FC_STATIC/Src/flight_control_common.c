@@ -9,12 +9,22 @@
 #include "basic_math.h"
 #include "flight_control_common.h"
 
+static void update_pid_fun(float setpoint, float input);
+static void update_sm_fun(float setpoint, float input);
+
 extern int16_t gTHR;
 extern float ahrs_kp;
 extern const float AHRS_KP_BIG;
 extern const float AHRS_KP_NORM;
 
-const float sf_lambda = 0.1; //	sliding surface convergence rate
+const float pid_kp = 0.0003;
+const float pid_ki = 0.002;
+const float pid_kd = 0.001;
+
+const float sm_kp_norm = 4.2;
+const float sm_kp_big = 107.0;
+
+const float sm_surf_lambda = 0.1; //	sliding surface convergence rate
 
 const short MIN_THROTTLE_ONESHOT42 = 4210; //or 5200
 const short MIN_THROTTLE_EDF = 1421;
@@ -34,35 +44,27 @@ static float constrain(float input, float negative_min, float positive_max) {
 }
 
 static float differentiate(void) {
-	return pidVar.new_val_p / pidVar.dt;
+	return (pidVar.new_val_p - pidVar.prev_val); // / pidVar.dt;
 }
 
 static float integrate(void) {
-	return pidVar.new_val_p * pidVar.dt;
+	return pidVar.new_val_p; // * pidVar.dt;
 }
 
-static void update_pid_fun(float input) {
-	if (pidInitialized) {
-		pidVar.new_val_p = pidVar.prev_val - input;
-		pidVar.new_val_i += integrate();
-		pidVar.new_val_d = differentiate();
-	} else {
-		pidInitialized = true; //TODO grab dt
-	}
-	pidVar.prev_val = input;
+static void update_pid_fun(float setpoint, float input) {
+	pidVar.new_val_p = setpoint - input;
+	pidVar.new_val_i += integrate();
+	pidVar.new_val_d = differentiate();
+	pidVar.prev_val = pidVar.new_val_p;
 }
 
-static void update_sm_fun(float input) {
-	if (smInitialized) {
-		float error = smVar.prev_val - input;
-		smVar.sliding_surface += sf_lambda * error * smVar.dt;
-		smVar.sliding_surface = sign1(smVar.sliding_surface);
-		smVar.sliding_mode = constrain(error, -AHRS_KP_NORM, AHRS_KP_BIG)
-				* smVar.sliding_surface * smVar.dt;
-	} else {
-		smInitialized = true; //TODO grab dt
-	}
-	smVar.prev_val = input;
+static void update_sm_fun(float setpoint, float input) {
+	float error = setpoint - input;
+	smVar.sliding_surface += sm_surf_lambda * error; // * smVar.dt;
+	smVar.sliding_surface = sign0(smVar.sliding_surface);
+	smVar.sliding_mode = error * smVar.sliding_surface; // * smVar.dt; //constrain(error, sm_kp_norm, sm_kp_big)
+	smVar.prev_val = error;
+
 }
 
 PidVariable_t* flight_get_pid_var() {
