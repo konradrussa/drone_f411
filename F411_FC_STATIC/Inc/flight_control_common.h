@@ -14,18 +14,18 @@ typedef void (*update_pid_fptr)(float setpoint, float input);
 typedef void (*update_sm_fptr)(float setpoint, float input);
 
 typedef struct PidVariable {
-	float prev_val;
-	float new_val_p;
-	float new_val_i;
-	float new_val_d;
+	float prev_error;
+	float error_p;
+	float error_i;
+	float error_d;
 	float dt;
 	update_pid_fptr update_pid;
 } PidVariable_t;
 
 typedef struct SmVariable {
-	float sliding_mode;
+	float error_p;
 	float sliding_surface;
-	float prev_val;
+	float prev_error;
 	float dt;
 	update_sm_fptr update_sm;
 } SmVariable_t;

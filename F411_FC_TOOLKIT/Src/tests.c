@@ -47,19 +47,19 @@ const float test_pid_kd = 0.1;
 static float dT = 0.001;
 
 void test_pid_control(float start, float goal) {
-	flight_get_pid_var()->new_val_p = 0;
-	flight_get_pid_var()->new_val_i = 0;
-	flight_get_pid_var()->new_val_d = 0;
-	flight_get_pid_var()->prev_val = 0;
+	flight_get_pid_var()->error_p = 0;
+	flight_get_pid_var()->error_i = 0;
+	flight_get_pid_var()->error_d = 0;
+	flight_get_pid_var()->prev_error = 0;
 	float output = 0.0;
 	float measured = start;
 	flight_get_pid_var()->dt = dT;
 	for (int i = 0; i < 100; i++) {
 		flight_get_pid_var()->update_pid(goal, measured);
 
-		output = test_pid_kp * flight_get_pid_var()->new_val_p
-				+ test_pid_ki * flight_get_pid_var()->new_val_i
-				+ test_pid_kd * flight_get_pid_var()->new_val_d;
+		output = test_pid_kp * flight_get_pid_var()->error_p
+				+ test_pid_ki * flight_get_pid_var()->error_i
+				+ test_pid_kd * flight_get_pid_var()->error_d;
 
 		measured += output;
 		//printf("PID goal=%9.6f measured=%9.6f output=%9.6f\n", goal, measured, output);
@@ -70,16 +70,16 @@ void test_pid_control(float start, float goal) {
 }
 
 void test_sm_control(float start, float goal) {
-	flight_get_sm_var()->sliding_mode = 0;
+	flight_get_sm_var()->error_p = 0;
 	flight_get_sm_var()->sliding_surface = 0;
-	flight_get_sm_var()->prev_val = 0;
+	flight_get_sm_var()->prev_error = 0;
 	float output = 0.0;
 	float measured = start;
 	flight_get_sm_var()->dt = dT;
 	for (int i = 0; i < 100; i++) {
 		flight_get_sm_var()->update_sm(goal, measured);
-		output = flight_get_sm_var()->sliding_mode;
-		measured += output;
+		output = flight_get_sm_var()->error_p;
+		measured += output; // / dT
 		//printf("SM goal=%9.6f measured=%9.6f output=%9.6f\n", goal, measured, output);
 		if (measured == goal) {
 			break;

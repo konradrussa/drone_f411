@@ -9,6 +9,8 @@
 #include "basic_math.h"
 #include "flight_control_common.h"
 
+
+// forward declaration
 static void update_pid_fun(float setpoint, float input);
 static void update_sm_fun(float setpoint, float input);
 
@@ -32,8 +34,6 @@ const short MIN_THROTTLE = 51;
 
 static PidVariable_t pidVar = { 0.0, 0.0, 0.0, 0.0, 0.0, &update_pid_fun };
 static SmVariable_t smVar = { 0.0, 0.0, 0.0, 0.0, &update_sm_fun };
-volatile bool pidInitialized = false;
-volatile bool smInitialized = false;
 
 static float constrain(float input, float negative_min, float positive_max) {
 	if (input < negative_min)
@@ -44,26 +44,26 @@ static float constrain(float input, float negative_min, float positive_max) {
 }
 
 static float differentiate(void) {
-	return (pidVar.new_val_p - pidVar.prev_val); // / pidVar.dt;
+	return (pidVar.error_p - pidVar.prev_error); // / pidVar.dt;
 }
 
 static float integrate(void) {
-	return pidVar.new_val_p; // * pidVar.dt;
+	return pidVar.error_p; // * pidVar.dt;
 }
 
 static void update_pid_fun(float setpoint, float input) {
-	pidVar.new_val_p = setpoint - input;
-	pidVar.new_val_i += integrate();
-	pidVar.new_val_d = differentiate();
-	pidVar.prev_val = pidVar.new_val_p;
+	pidVar.error_p = setpoint - input;
+	pidVar.error_i += integrate();
+	pidVar.error_d = differentiate();
+	pidVar.prev_error = pidVar.error_p;
 }
 
 static void update_sm_fun(float setpoint, float input) {
 	float error = setpoint - input;
 	smVar.sliding_surface += sm_surf_lambda * error; // * smVar.dt;
 	smVar.sliding_surface = sign0(smVar.sliding_surface);
-	smVar.sliding_mode = error * smVar.sliding_surface; // * smVar.dt; //constrain(error, sm_kp_norm, sm_kp_big)
-	smVar.prev_val = error;
+	smVar.error_p = error * smVar.sliding_surface; // * smVar.dt; //constrain(error, sm_kp_norm, sm_kp_big)
+	smVar.prev_error = error;
 
 }
 
