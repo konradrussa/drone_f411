@@ -16,4 +16,7 @@ void quaternion_add(const Quaternion_t *q1, const Quaternion_t *q2,
 void quaternion_to_euler(const Quaternion_t *qr, EulerAngle_t *ea);
 void quaternion_from_euler(const EulerAngle_t *ea, Quaternion_t *qo);
 
+float quaternion_angular_distance(const Quaternion_t *q1,
+		const Quaternion_t *q2);
+
 #endif /* _QUATERNION_H_ */

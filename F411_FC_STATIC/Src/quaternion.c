@@ -144,3 +144,16 @@ void quaternion_from_euler(const EulerAngle_t *ea, Quaternion_t *qo) {
 	qo->q3 = cosf(roll) * cosf(pitch) * sinf(yaw)
 			- sinf(roll) * cosf(yaw) * sinf(pitch);
 }
+
+//TODO check
+//angle (in radians) between two rotations
+float quaternion_angular_distance(const Quaternion_t *q1,
+		const Quaternion_t *q2) {
+	Quaternion_t qc;
+	quaternion_conjugate(q2, &qc);
+	Quaternion_t qd;
+	quaternion_multiply(q1, &qc, &qd);
+	float scalar = qd.q0;
+	float vector_norm = math_sqrt(qd.q1 * qd.q1 + qd.q2 * qd.q2 + qd.q3 * qd.q3);
+	return 2 * atan2f(vector_norm, math_abs(scalar));
+}

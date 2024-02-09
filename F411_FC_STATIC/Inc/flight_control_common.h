@@ -9,6 +9,7 @@
 #define FLIGHT_CONTROL_COMMON_H_
 
 #include <stdint.h>
+#include "basic_math.h"
 
 typedef void (*update_pid_fptr)(float setpoint, float input);
 typedef void (*update_sm_fptr)(float setpoint, float input);
@@ -30,9 +31,26 @@ typedef struct SmVariable {
 	update_sm_fptr update_sm;
 } SmVariable_t;
 
+typedef struct MpVariable {
+	struct MpState {
+		Vector3D_t pos;
+		Vector3D_t vel;
+		Vector3D_t acc;
+	} state;
+	struct MpControl {
+		float thrust;
+		float roll;
+		float pitch;
+		float yaw;
+	} control;
+	float dt;
+} MpVariable_t;
+
 void flight_set_parameters(void);
 
 PidVariable_t* flight_get_pid_var(void);
-SmVariable_t* flight_get_sm_var();
+SmVariable_t* flight_get_sm_var(void);
+MpVariable_t* flight_calculate_mp_var(void);
+
 
 #endif /* FLIGHT_CONTROL_COMMON_H_ */

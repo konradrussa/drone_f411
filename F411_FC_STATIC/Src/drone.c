@@ -14,6 +14,8 @@ static float throttle_s = 0.0, roll_s = 0.0, pitch_s = 0.0, yaw_s = 0.0,
 static Queue_t queues_rc[6];
 
 //constants
+const float drone_whole_mass = 4.5;
+const float front_area = 0.1; //0.3^2 + 0.01
 const float drone_center_mass = 4.0; // drone mass kg with 2 EDF, center mass 4 kg and 6 side rotors each 100g
 const float motor_mass = 0.1;
 const float l = 0.2; // 0.20 * 2 * sin(30) no-perpendicular distance to axes, Quad 500, 50 cm drone
@@ -153,4 +155,12 @@ inline const uint32_t get_motor_max() {
 
 inline const uint32_t get_motor_min() {
 	return MOTOR_MIN;
+}
+
+inline const float get_drone_whole_mass() {
+	return drone_whole_mass;
+}
+
+inline const float get_front_area() {
+	return front_area;
 }

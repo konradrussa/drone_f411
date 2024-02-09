@@ -24,6 +24,8 @@ const uint32_t get_motor_edf_max(void);
 const uint32_t get_motor_edf_min(void);
 const uint32_t get_motor_max(void);
 const uint32_t get_motor_min(void);
+const float get_drone_whole_mass(void);
+const float get_front_area(void);
 Queue_t* get_throttle_queue_rc(void);
 Queue_t* get_pitch_queue_rc(void);
 Queue_t* get_roll_queue_rc(void);
