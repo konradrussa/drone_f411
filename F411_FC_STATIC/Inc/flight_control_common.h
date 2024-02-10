@@ -38,7 +38,9 @@ typedef struct MpVariable {
 		Vector3D_t acc;
 	} state;
 	struct MpControl {
-		float thrust;
+		float thrust; // cumulative thrust
+		float thrust_vtol; // VTOL + permanent vtol rotors
+		float thrust_cruise; // Cruise + EDF or any other combinantion
 		float roll;
 		float pitch;
 		float yaw;

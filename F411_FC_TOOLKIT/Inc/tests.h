@@ -11,5 +11,6 @@
 void test_quaternion_and_euler_angles_and_rotation_matrix(void);
 void test_pid_control(void);
 void test_sm_control(void);
+void void test_mp_control(void);
 
 #endif /* TESTS_H_ */

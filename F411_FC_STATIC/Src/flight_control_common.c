@@ -38,7 +38,7 @@ const short MIN_THROTTLE = 51;
 static PidVariable_t pidVar = { 0.0, 0.0, 0.0, 0.0, 0.0, &update_pid_fun };
 static SmVariable_t smVar = { 0.0, 0.0, 0.0, 0.0, &update_sm_fun };
 static MpVariable_t mpVar = { { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
-		0.0, 0.0 } }, { 0.0, 0.0, 0.0, 0.0 }, 0.0 };
+		0.0, 0.0 } }, { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, 0.0 };
 
 static float constrain(float input, float negative_min, float positive_max) {
 	if (input < negative_min)
@@ -73,24 +73,34 @@ static void update_sm_fun(float setpoint, float input) {
 
 static void update_mp_fun(MpVariable_t *mpVar) {
 	float gravity_force = get_drone_whole_mass() * get_geo_g();
-	float drag_force = 1/2 * get_ro() * get_front_area() * drag_coefficience;// * v * uv
+	float drag_force = 1 / 2 * get_ro() * get_front_area() * drag_coefficience; // * v * uv
 	// TODO complete control calculation based on radio angles
-	mpVar->control.thrust = gravity_force;
+	float net_vertical_force = gravity_force + mpVar->control.thrust_vtol; // TODO include angle of gravity
+	mpVar->control.thrust = math_sqrt(
+			net_vertical_force * net_vertical_force
+					+ mpVar->control.thrust_cruise
+							* mpVar->control.thrust_cruise); // + EDF force + VTOL force + Cruise model force
 	for (int i = 0; i < mp_horizon; i++) {
 		float a = (mpVar->control.thrust - gravity_force - drag_force)
 				/ get_drone_whole_mass();
 
-		mpVar->state.acc.x += a/cosf(mpVar->control.pitch);
-		mpVar->state.acc.y += a/cosf(mpVar->control.roll);
-		mpVar->state.acc.z += a - get_geo_g();
+		mpVar->state.acc.x +=
+				(mpVar->control.pitch == 0.0) ?
+						0.0 : a / cosf(mpVar->control.pitch);
+		mpVar->state.acc.y +=
+				(mpVar->control.roll == 0.0) ?
+						0.0 : a / cosf(mpVar->control.roll);
+		mpVar->state.acc.z += a;
 
-		mpVar->state.vel.x += mpVar->state.acc.x * mpVar->dt;
-		mpVar->state.vel.y += mpVar->state.acc.y * mpVar->dt;
-		mpVar->state.vel.z += mpVar->state.acc.z * mpVar->dt;
+		if (i >= 1) {
+			mpVar->state.vel.x += mpVar->state.acc.x * mpVar->dt;
+			mpVar->state.vel.y += mpVar->state.acc.y * mpVar->dt;
+			mpVar->state.vel.z += mpVar->state.acc.z * mpVar->dt;
 
-		mpVar->state.pos.x += mpVar->state.vel.x * mpVar->dt;
-		mpVar->state.pos.y += mpVar->state.vel.y * mpVar->dt;
-		mpVar->state.pos.z += mpVar->state.vel.z * mpVar->dt;
+			mpVar->state.pos.x += mpVar->state.vel.x * mpVar->dt;
+			mpVar->state.pos.y += mpVar->state.vel.y * mpVar->dt;
+			mpVar->state.pos.z += mpVar->state.vel.z * mpVar->dt;
+		}
 	}
 }
 
