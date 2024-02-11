@@ -152,3 +152,8 @@ double math_stddev(int length, double mean, double data, ...) {
 	va_end(stddev_list);
 	return math_sqrt(std / (double) length);
 }
+
+// vector magnitude
+float math_vec_mag(Vector3D_t *vec) {
+	return math_sqrt(vec->x * vec->x + vec->y * vec->y + vec->z * vec->z);
+}
