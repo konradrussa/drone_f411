@@ -79,11 +79,15 @@ static float longitudinal_dynamics(float pitch, float forward_thrust,
 		float upward_thrust) {
 	float resultant_force = math_sqrt(
 			forward_thrust * forward_thrust + upward_thrust * upward_thrust);
-	float tau = asinf(sinf(upward_thrust / resultant_force));
-	float force_v = resultant_force * sinf(tau - pitch);
-	return force_v;
+	float upward_force = resultant_force;
+	if (resultant_force != 0.0 && pitch != 0.0) {
+		float tau = asinf(sinf(upward_thrust / resultant_force));
+		upward_force = resultant_force * sinf(tau - pitch);
+	}
+	return upward_force;
 }
 
+//TODO incorporate acceleration from cruise mode
 static void acceleration_kinematics(MpVariable_t *mpVar, float acceleration) {
 	mpVar->state.acc.x +=
 			(mpVar->control.pitch == 0.0) ?
@@ -106,13 +110,12 @@ static void velocity_position_kinematics(MpVariable_t *mpVar) {
 
 static void update_mp_fun(MpVariable_t *mpVar) {
 	float gravity_force = get_drone_whole_mass() * get_geo_g();
-	float base_drag_force = 1 / 2 * get_ro() * get_front_area()
+	float base_drag_force = 1.0 / 2.0 * get_ro() * get_front_area()
 			* drag_coefficience; // * v^2 * uv
 
 	float net_vertical_force = longitudinal_dynamics(mpVar->control.pitch,
 			mpVar->control.thrust_cruise, mpVar->control.thrust_vtol)
-			+ lateral_dynamics(mpVar->control.roll, mpVar->control.thrust_vtol)
-			- gravity_force;
+			+ lateral_dynamics(mpVar->control.roll, mpVar->control.thrust_vtol);
 
 	float net_horizontal_force = mpVar->control.thrust_cruise
 			* cosf(mpVar->control.pitch);
@@ -124,8 +127,8 @@ static void update_mp_fun(MpVariable_t *mpVar) {
 	for (int i = 0; i < mp_horizon; i++) {
 		drag_force = base_drag_force * mpVar->state.vel.x * mpVar->state.vel.x
 				* (mpVar->state.vel.x / math_vec_mag(&mpVar->state.vel));
-		acceleration = (mpVar->control.thrust - drag_force)
-				/ get_drone_whole_mass(); // - gravity_force
+		acceleration = (mpVar->control.thrust - drag_force - gravity_force)
+				/ get_drone_whole_mass();
 
 		acceleration_kinematics(mpVar, acceleration);
 
