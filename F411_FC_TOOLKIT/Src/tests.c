@@ -5,6 +5,8 @@
  *      Author: konrad
  */
 #include <assert.h>
+#include "env.h"
+#include "drone.h"
 #include "ahrs_common.h"
 #include "basic_math.h"
 #include "quaternion.h"
@@ -88,52 +90,16 @@ void test_sm_control(float start, float goal) {
 }
 
 void test_mp_control() {
-	static MpVariable_t mpVar = { { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
-			0.0, 0.0 } }, { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }, 0.0 };
-	//const float front_area = 0.1; //0.3^2 + 0.01
-	//const float ro = 1.225; 					// air density kg/m
-	float gravity_force = 0; //get_drone_whole_mass() * get_geo_g();
-	float drag_force = 0; //1 / 2 * get_ro() * get_front_area() * drag_coefficience; // * v * uv
-	// TODO complete control calculation based on radio angles
-	mpVar.control.thrust_vtol = 3;
-	mpVar.control.pitch = 0;
-	mpVar.control.roll = 0;
-	dT = 1;
-	float drone_whole_mass = 1;
-	int mp_horizon = 5;
-	float net_vertical_force = gravity_force + mpVar.control.thrust_vtol; // TODO include angle of gravity
-	mpVar.control.thrust = math_sqrt(
-			net_vertical_force * net_vertical_force
-					+ mpVar.control.thrust_cruise
-							* mpVar.control.thrust_cruise); // + EDF force + VTOL force + Cruise model force
-	for (int i = 0; i < mp_horizon; i++) {
-		float a = (mpVar.control.thrust - gravity_force - drag_force)
-				/ drone_whole_mass;
+	MpVariable_t* mpVar = flight_get_mp_var();
+	struct MpControl* control = mpVar->control;
+	control->thrust_vtol = 9.1*get_geo_g();
+	flight_get_mp_var()->dt = 1;
+	flight_get_mp_var()->update_mp(control);
 
-		mpVar.state.acc.x +=
-				(mpVar.control.pitch == 0.0) ?
-						0.0 : a / cosf(mpVar.control.pitch);
-		mpVar.state.acc.y +=
-				(mpVar.control.roll == 0.0) ?
-						0.0 : a / cosf(mpVar.control.roll);
-		mpVar.state.acc.z += a;
+	//printf("State acc %d: x=%.2f, y=%.2f, z=%.2f\n", i, mpVar->state.acc.x, mpVar->state.acc.y, mpVar->state.acc.z);
+	//printf("State vel %d: x=%.2f, y=%.2f, z=%.2f\n", i, mpVar->state.vel.x, mpVar->state.vel.y, mpVar->state.vel.z);
+	//printf("State pos %d: x=%.2f, y=%.2f, z=%.2f\n", i, mpVar->state.pos.x, mpVar->state.pos.y, mpVar->state.pos.z);
 
-		//printf("A %d: x=%.2f\n", i, a);
-
-		if (i >= 1) {
-			mpVar.state.vel.x += mpVar.state.acc.x * mpVar.dt;
-			mpVar.state.vel.y += mpVar.state.acc.y * mpVar.dt;
-			mpVar.state.vel.z += mpVar.state.acc.z * mpVar.dt;
-
-			mpVar.state.pos.x += mpVar.state.vel.x * mpVar.dt;
-			mpVar.state.pos.y += mpVar.state.vel.y * mpVar.dt;
-			mpVar.state.pos.z += mpVar.state.vel.z * mpVar.dt;
-		}
-
-		//printf("State acc %d: x=%.2f, y=%.2f, z=%.2f\n", i, mpVar->state.acc.x, mpVar->state.acc.y, mpVar->state.acc.z);
-		//printf("State vel %d: x=%.2f, y=%.2f, z=%.2f\n", i, mpVar->state.vel.x, mpVar->state.vel.y, mpVar->state.vel.z);
-		//printf("State pos %d: x=%.2f, y=%.2f, z=%.2f\n", i, mpVar->state.pos.x, mpVar->state.pos.y, mpVar->state.pos.z);
-	}
 }
 
 //int main() {

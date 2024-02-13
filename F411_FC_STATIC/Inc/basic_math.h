@@ -9,6 +9,7 @@
 #define EPSILON_2		(1e-2)
 #define EPSILON_3 		(1e-3)
 #define EPSILON_4 		(1e-4)
+#define EPSILON_7 		(1e-7)
 
 #define MAX_RAD    		3.141592653589793238462643383279502884197 	//	180 degree
 
