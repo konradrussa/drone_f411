@@ -78,7 +78,7 @@ static float lateral_dynamics(float roll, float upward_thrust) {
 	return upward_thrust * sinf(roll);
 }
 
-static float gravitational_dynamics(float pitch, float resultant_force,
+static float longitudinal_dynamics(float pitch, float resultant_force,
 		float upward_thrust) {
 	float upward_force = resultant_force;
 	if (resultant_force != 0.0 && upward_thrust != 0.0) {
@@ -88,7 +88,7 @@ static float gravitational_dynamics(float pitch, float resultant_force,
 	return upward_force;
 }
 
-static float longitudinal_dynamics(float pitch, float resultant_force,
+static float gravitational_dynamics(float pitch, float resultant_force,
 		float forward_thrust) {
 	float forward_force = resultant_force;
 	if (resultant_force != 0.0 && forward_thrust != 0.0) {
@@ -99,9 +99,10 @@ static float longitudinal_dynamics(float pitch, float resultant_force,
 }
 
 //TODO incorporate acceleration from cruise mode
-static void acceleration_kinematics(float acceleration_z, float acceleration_x) {
+static void acceleration_kinematics(float acceleration_z, float acceleration_y,
+		float acceleration_x) {
 	mpVar.state.acc.x += acceleration_x;
-	mpVar.state.acc.y += 0.0;
+	mpVar.state.acc.y += acceleration_y;
 	mpVar.state.acc.z += acceleration_z;
 }
 
@@ -115,6 +116,7 @@ static void velocity_position_kinematics() {
 	mpVar.state.pos.z += mpVar.state.vel.z * mpVar.dt;
 }
 
+//TODO include roll+pitch+yaw
 static void update_mp_fun(struct MpControl *control) {
 	mpVar.control = control;
 	float gravity_force = get_drone_whole_mass() * get_geo_g();
@@ -125,19 +127,26 @@ static void update_mp_fun(struct MpControl *control) {
 			mpVar.control->thrust_cruise * mpVar.control->thrust_cruise
 					+ mpVar.control->thrust_vtol * mpVar.control->thrust_vtol);
 
-	float net_vertical_force = gravitational_dynamics(mpVar.control->pitch,
-			resultant_force, mpVar.control->thrust_vtol)
-			+ lateral_dynamics(mpVar.control->roll, mpVar.control->thrust_vtol);
+	float net_lateral_force = lateral_dynamics(mpVar.control->roll,
+			mpVar.control->thrust_vtol);
 
-	float net_horizontal_force = longitudinal_dynamics(mpVar.control->pitch,
+	float net_longitudinal_force = longitudinal_dynamics(mpVar.control->pitch,
+			resultant_force, mpVar.control->thrust_vtol);
+
+	float net_vertical_force = net_longitudinal_force
+			* cosf(mpVar.control->roll);
+
+	float net_horizontal_force = gravitational_dynamics(mpVar.control->pitch,
 			resultant_force, mpVar.control->thrust_cruise);
 
 	mpVar.control->thrust = math_sqrt(
 			net_vertical_force * net_vertical_force
-					+ net_horizontal_force * net_horizontal_force); // + EDF force + VTOL force + Cruise model force
+					+ net_horizontal_force * net_horizontal_force
+					+ net_lateral_force * net_lateral_force); // + EDF force + VTOL force + Cruise model force
 
 	float drag_force = 0.0;
 	float acceleration_x = 0.0;
+	float acceleration_y = 0.0;
 	float acceleration_z = 0.0;
 	for (int i = 0; i < mp_horizon; i++) {
 		float unit_vec_denominator = math_vec_mag(&mpVar.state.vel);
@@ -147,9 +156,11 @@ static void update_mp_fun(struct MpControl *control) {
 		}
 		acceleration_z = (net_vertical_force - drag_force - gravity_force)
 				/ get_drone_whole_mass();
-		acceleration_x = (net_horizontal_force - drag_force) / get_drone_whole_mass();
-
-		acceleration_kinematics(acceleration_z, acceleration_x);
+		acceleration_y = (net_lateral_force - drag_force)
+				/ get_drone_whole_mass();
+		acceleration_x = (net_horizontal_force - drag_force)
+				/ get_drone_whole_mass();
+		acceleration_kinematics(acceleration_z, acceleration_y, acceleration_x);
 
 		if (i >= 1) {
 			velocity_position_kinematics();

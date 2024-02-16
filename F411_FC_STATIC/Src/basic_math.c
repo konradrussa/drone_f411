@@ -12,6 +12,10 @@ inline int16_t math_abs(int16_t x) {
 	return x >= 0 ? x : -x;
 }
 
+inline float math_absf(float x) {
+	return x >= 0.0 ? x : -x;
+}
+
 inline float sign1(float value) {
 	if (value > 1.0)
 		return 1.0;

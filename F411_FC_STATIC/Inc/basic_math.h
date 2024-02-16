@@ -43,6 +43,7 @@ typedef struct EulerAngle {
 
 float math_sqrt(float x);
 float math_inv_sqrt(float x);
+float math_absf(float x);
 int16_t math_abs(int16_t x);
 int16_t math_max(int16_t val1, int16_t val2);
 int16_t math_min(int16_t val1, int16_t val2);
