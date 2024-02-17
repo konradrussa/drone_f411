@@ -90,16 +90,39 @@ void test_sm_control(float start, float goal) {
 }
 
 void test_mp_control() {
-	MpVariable_t* mpVar = flight_get_mp_var();
-	struct MpControl* control = mpVar->control;
-	control->thrust_vtol = 9.1*get_geo_g();
-	flight_get_mp_var()->dt = 1;
-	flight_get_mp_var()->update_mp(control);
+	MpVariable_t *mpVar = flight_get_mp_var();
+	struct MpControl *control = mpVar->control;
+	control->thrust_vtol = 2 * get_geo_g();
+	control->thrust_cruise = 2 * get_geo_g();
+	control->roll = -45 * MAX_RAD / 180;
+	control->pitch = 45 * MAX_RAD / 180;
+	control->yaw = 0 * MAX_RAD / 180;
+	mpVar->dt = 1;
+	mpVar->update_mp(control);
 
 	//printf("State acc %d: x=%.2f, y=%.2f, z=%.2f\n", i, mpVar->state.acc.x, mpVar->state.acc.y, mpVar->state.acc.z);
 	//printf("State vel %d: x=%.2f, y=%.2f, z=%.2f\n", i, mpVar->state.vel.x, mpVar->state.vel.y, mpVar->state.vel.z);
 	//printf("State pos %d: x=%.2f, y=%.2f, z=%.2f\n", i, mpVar->state.pos.x, mpVar->state.pos.y, mpVar->state.pos.z);
+	//printf("State yaw %d: yaw = %.2f, thrust = %.2f\n", i, mpVar->control->yaw * 180/PI, mpVar->control->thrust);
 
+}
+
+void test_transition() {
+	EulerAngle_t ea;
+	ea.roll_x = 45 * MAX_RAD / 180;
+	ea.pitch_y = 45 * MAX_RAD / 180;
+	ea.yaw_z = 45 * MAX_RAD / 180;
+	Matrix3D_t rot_mat = *ahrs_get_rotation_matrix(ea.roll_x, ea.pitch_y,
+			ea.yaw_z);
+
+	Vector3D_t vec;
+	vec.x = 2.0;
+	vec.y = 0.0;
+	vec.z = 2.0;
+
+	Vector3D_t out;
+	ahrs_rotation_matrix_vector_product(&rot_mat, &vec, &out);
+	//printf("Vector product: %9.6f, %9.6f, %9.6f\n", out.x, out.y, out.z);
 }
 
 //int main() {

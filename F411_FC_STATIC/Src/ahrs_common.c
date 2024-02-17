@@ -114,8 +114,18 @@ Matrix3D_t* ahrs_get_rotation_matrix(float phi, float theta, float psi) {
 	return &mat_product;
 }
 
-EulerAngle_t* ahrs_get_euler_derivatives(float phi, float theta, float p, float q,
-		float r) {
+void ahrs_rotation_matrix_vector_product(const Matrix3D_t *matrix,
+		const Vector3D_t *vector, Vector3D_t *out) {
+	out->x = matrix->row0[0] * vector->x + matrix->row0[1] * vector->y
+			+ matrix->row0[2] * vector->z;
+	out->y = matrix->row1[0] * vector->x + matrix->row1[1] * vector->y
+			+ matrix->row1[2] * vector->z;
+	out->z = matrix->row2[0] * vector->x + matrix->row2[1] * vector->y
+			+ matrix->row2[2] * vector->z;
+}
+
+EulerAngle_t* ahrs_get_euler_derivatives(float phi, float theta, float p,
+		float q, float r) {
 	//Euler forward method
 	euler_derivatives.roll_x = 1.0 * p + sinf(phi) * tanf(theta) * q
 			+ cosf(phi) * tanf(theta) * r; //roll
