@@ -11,7 +11,7 @@
 #include "basic_math.h"
 #include "quaternion.h"
 #include "flight_control_common.h"
-
+#include <math.h>
 #include "unity.h"
 
 void test_quaternion_and_euler_angles_and_rotation_matrix() {
@@ -94,9 +94,9 @@ void test_mp_control() {
 	struct MpControl *control = mpVar->control;
 	control->thrust_vtol = 2 * get_geo_g();
 	control->thrust_cruise = 2 * get_geo_g();
-	control->roll = -45 * MAX_RAD / 180;
-	control->pitch = 45 * MAX_RAD / 180;
-	control->yaw = 0 * MAX_RAD / 180;
+	control->angles.roll_x = -45 * MAX_RAD / 180;
+	control->angles.pitch_y = 45 * MAX_RAD / 180;
+	control->angles.yaw_z = 0 * MAX_RAD / 180;
 	mpVar->dt = 1;
 	mpVar->update_mp(control);
 
@@ -125,10 +125,57 @@ void test_transition() {
 	//printf("Vector product: %9.6f, %9.6f, %9.6f\n", out.x, out.y, out.z);
 }
 
-//int main() {
-//test_pid_control(2, 7000);
-//test_pid_control(7000, 4200);
+static float lateral_dynamics(float roll, float upward_thrust) {
+	return upward_thrust * -sinf(roll);
+}
 
-//test_sm_control(2, 7000);
-//test_sm_control(7000, 4200);
-//}
+static float gravitational_dynamics(float pitch, float resultant_force,
+		float forward_thrust) {
+	float force_v = resultant_force;
+	if (resultant_force != 0.0 && forward_thrust != 0.0) {
+		float tau = asinf(forward_thrust / resultant_force);
+		force_v = resultant_force * sinf(tau + pitch);
+	}
+	return force_v;
+}
+
+static float longitudinal_dynamics(float pitch, float resultant_force,
+		float upward_thrust) {
+	float force_v = resultant_force;
+	if (resultant_force != 0.0 && upward_thrust != 0.0) {
+		float tau = asinf(upward_thrust / resultant_force);
+		force_v = resultant_force * sinf(tau - pitch);
+	}
+	return force_v;
+}
+//TODO fix 3D rotation
+void test_dynamics() {
+	MpVariable_t *mpVar = flight_get_mp_var();
+	struct MpControl *control = mpVar->control;
+	control->thrust_vtol = 2 * get_geo_g();
+	control->thrust_cruise = 2 * get_geo_g();
+	control->angles.roll_x = -45 * MAX_RAD / 180;
+	control->angles.pitch_y = 45 * MAX_RAD / 180;
+	control->angles.yaw_z = 0 * MAX_RAD / 180;
+	mpVar->dt = 1;
+	float resultant_force = sqrtf(
+			mpVar->control->thrust_cruise * mpVar->control->thrust_cruise
+					+ mpVar->control->thrust_vtol * mpVar->control->thrust_vtol);
+
+	float net_lateral_force = lateral_dynamics(mpVar->control->angles.roll_x,
+			mpVar->control->thrust_vtol);
+
+	float net_longitudinal_force = longitudinal_dynamics(mpVar->control->angles.pitch_y,
+			resultant_force, mpVar->control->thrust_vtol);
+
+	float net_vertical_force = net_longitudinal_force
+			* cosf(mpVar->control->angles.roll_x);
+
+	float net_horizontal_force = gravitational_dynamics(mpVar->control->angles.pitch_y,
+			resultant_force, mpVar->control->thrust_cruise);
+
+	mpVar->control->thrust = sqrtf(
+			net_vertical_force * net_vertical_force
+					+ net_horizontal_force * net_horizontal_force
+					+ net_lateral_force * net_lateral_force); // + EDF force + VTOL force + Cruise model force
+}

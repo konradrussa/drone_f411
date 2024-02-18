@@ -35,9 +35,7 @@ struct MpControl {
 	float thrust; // cumulative thrust
 	float thrust_vtol; // VTOL + permanent vtol rotors
 	float thrust_cruise; // Cruise + EDF or any other combinantion
-	float roll;
-	float pitch;
-	float yaw;
+	EulerAngle_t angles;
 };
 
 typedef void (*update_mp_fptr)(struct MpControl *control);

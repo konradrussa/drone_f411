@@ -8,6 +8,7 @@
 #include "env.h"
 #include "drone.h"
 #include "timer.h"
+#include "ahrs_common.h"
 #include "flight_control_common.h"
 
 // forward declaration
@@ -39,7 +40,7 @@ const short MIN_THROTTLE = 51;
 static PidVariable_t pidVar = { 0.0, 0.0, 0.0, 0.0, 0.0, &update_pid_fun };
 static SmVariable_t smVar = { 0.0, 0.0, 0.0, 0.0, &update_sm_fun };
 
-struct MpControl control = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+struct MpControl control = { 0.0, 0.0, 0.0, { 0.0, 0.0, 0.0 } };
 static MpVariable_t mpVar = { { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
 		0.0, 0.0 } }, 0.0, &control, &update_mp_fun };
 
@@ -74,31 +75,6 @@ static void update_sm_fun(float setpoint, float input) {
 	smVar.prev_error = error; // TODO add differentiation and integration
 }
 
-static float lateral_dynamics(float roll, float upward_thrust) {
-	return upward_thrust * sinf(roll);
-}
-
-static float longitudinal_dynamics(float pitch, float resultant_force,
-		float upward_thrust) {
-	float upward_force = resultant_force;
-	if (resultant_force != 0.0 && upward_thrust != 0.0) {
-		float tau = asinf(upward_thrust / resultant_force);
-		upward_force = resultant_force * sinf(tau - pitch);
-	}
-	return upward_force;
-}
-
-static float gravitational_dynamics(float pitch, float resultant_force,
-		float forward_thrust) {
-	float forward_force = resultant_force;
-	if (resultant_force != 0.0 && forward_thrust != 0.0) {
-		float tau = asinf(forward_thrust / resultant_force);
-		forward_force = resultant_force * sinf(tau + pitch);
-	}
-	return forward_force;
-}
-
-//TODO incorporate acceleration from cruise mode
 static void acceleration_kinematics(float acceleration_z, float acceleration_y,
 		float acceleration_x) {
 	mpVar.state.acc.x += acceleration_x;
@@ -116,33 +92,22 @@ static void velocity_position_kinematics() {
 	mpVar.state.pos.z += mpVar.state.vel.z * mpVar.dt;
 }
 
-//TODO include roll+pitch+yaw
 static void update_mp_fun(struct MpControl *control) {
 	mpVar.control = control;
 	float gravity_force = get_drone_whole_mass() * get_geo_g();
 	float base_drag_force = 1.0 / 2.0 * get_ro() * get_front_area()
 			* drag_coefficience; // * v^2 * uv
 
-	float resultant_force = math_sqrt(
-			mpVar.control->thrust_cruise * mpVar.control->thrust_cruise
-					+ mpVar.control->thrust_vtol * mpVar.control->thrust_vtol);
+	Matrix3D_t *rot_mat = ahrs_get_rotation_matrix(control->angles.roll_x,
+			control->angles.pitch_y, control->angles.yaw_z);
 
-	float net_lateral_force = lateral_dynamics(mpVar.control->roll,
-			mpVar.control->thrust_vtol);
+	Vector3D_t thrusts = { control->thrust_cruise, 0.0, control->thrust_vtol };
 
-	float net_longitudinal_force = longitudinal_dynamics(mpVar.control->pitch,
-			resultant_force, mpVar.control->thrust_vtol);
-
-	float net_vertical_force = net_longitudinal_force
-			* cosf(mpVar.control->roll);
-
-	float net_horizontal_force = gravitational_dynamics(mpVar.control->pitch,
-			resultant_force, mpVar.control->thrust_cruise);
+	Vector3D_t forces;
+	ahrs_rotation_matrix_vector_product(rot_mat, &thrusts, &forces);
 
 	mpVar.control->thrust = math_sqrt(
-			net_vertical_force * net_vertical_force
-					+ net_horizontal_force * net_horizontal_force
-					+ net_lateral_force * net_lateral_force); // + EDF force + VTOL force + Cruise model force
+			forces.z * forces.z + forces.y * forces.y + forces.x * forces.x); // + EDF force + VTOL force + Cruise model force
 
 	float drag_force = 0.0;
 	float acceleration_x = 0.0;
@@ -154,12 +119,10 @@ static void update_mp_fun(struct MpControl *control) {
 			drag_force = base_drag_force * mpVar.state.vel.x * mpVar.state.vel.x
 					* (mpVar.state.vel.x / unit_vec_denominator);
 		}
-		acceleration_z = (net_vertical_force - drag_force - gravity_force)
+		acceleration_z = (forces.z - drag_force - gravity_force)
 				/ get_drone_whole_mass();
-		acceleration_y = (net_lateral_force - drag_force)
-				/ get_drone_whole_mass();
-		acceleration_x = (net_horizontal_force - drag_force)
-				/ get_drone_whole_mass();
+		acceleration_y = (forces.y - drag_force) / get_drone_whole_mass();
+		acceleration_x = (forces.x - drag_force) / get_drone_whole_mass();
 		acceleration_kinematics(acceleration_z, acceleration_y, acceleration_x);
 
 		if (i >= 1) {
