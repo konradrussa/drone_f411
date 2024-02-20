@@ -16,7 +16,9 @@ AxesRaw_t accel, gyro, mag;
 
 float compass_deg;
 
-void flight_imu_calibration(bool use_magnetometer) {
+// process in main for FC training
+void flight_imu_calibration(bool use_magnetometer, uint32_t last_tick,
+		uint32_t diff_us) {
 	IMU_t *imu = get_imu();
 	AxesRaw_t accel_data[2], gyro_data[2], mag_data[2];
 	accel_data[0].AXIS_X = imu->accel_data[0].x;
@@ -32,16 +34,17 @@ void flight_imu_calibration(bool use_magnetometer) {
 	gyro_data[1].AXIS_X = imu->gyro_data[1].x;
 	gyro_data[1].AXIS_Y = imu->gyro_data[1].y;
 	gyro_data[1].AXIS_Z = imu->gyro_data[1].z;
-	if (use_magnetometer) {
-		mag_data[0].AXIS_X = imu->mag_data[0].x;
-		mag_data[0].AXIS_Y = imu->mag_data[0].y;
+	if (use_magnetometer) { // AG: X north Y East Z Up, M: Y North X East Z Up
+		mag_data[0].AXIS_X = imu->mag_data[0].y;
+		mag_data[0].AXIS_Y = imu->mag_data[0].x;
 		mag_data[0].AXIS_Z = imu->mag_data[0].z;
-		mag_data[1].AXIS_X = imu->mag_data[1].x;
-		mag_data[1].AXIS_Y = imu->mag_data[1].y;
+		mag_data[1].AXIS_X = imu->mag_data[1].y;
+		mag_data[1].AXIS_Y = imu->mag_data[1].x;
 		mag_data[1].AXIS_Z = imu->mag_data[1].z;
 	}
 
 	calibration(accel_data, gyro_data, mag_data, use_magnetometer);
+	calculate_imu_noise(accel_data, gyro_data, mag_data, use_magnetometer);
 }
 
 // process in main

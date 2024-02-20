@@ -10,6 +10,7 @@
 #include "ahrs_common.h"
 #include "basic_math.h"
 #include "quaternion.h"
+#include "matrix.h"
 #include "flight_control_common.h"
 #include <math.h>
 #include "unity.h"
@@ -24,19 +25,19 @@ void test_quaternion_and_euler_angles_and_rotation_matrix() {
 	quaternion_to_euler(&q, &ea);
 	//printf("quaternion_to_euler %9.6f, %9.6f, %9.6f\n", ea.roll_x, ea.pitch_y, ea.yaw_z);
 
-	Matrix3D_t m1 = *ahrs_get_rotation_matrix(ea.roll_x, ea.pitch_y, ea.yaw_z);
+	Matrix3D_t m1 = *matrix_get_rotation_matrix(ea.roll_x, ea.pitch_y, ea.yaw_z);
 	//printf("Rot mat row 1 %9.6f, %9.6f, %9.6f\n", m1.row0[0], m1.row0[1], m1.row0[2]);
 	//printf("Rot mat row 2 %9.6f, %9.6f, %9.6f\n", m1.row1[0], m1.row1[1], m1.row1[2]);
 	//printf("Rot mat row 3 %9.6f, %9.6f, %9.6f\n", m1.row2[0], m1.row2[1], m1.row2[2]);
 	Vector3D_t v1 = { 1.0, 2.0, 3.0 };
 	Eigen_t eigen;
-	math_eigen(&m1, &v1, &eigen);
+	ahrs_eigen(&m1, &v1, &eigen);
 	//printf("Rot mat determinant: %9.6f\n", det);
 	//printf("Eigen value %9.6f\n", eigen.eigenvalue);
 	//printf("Eigen vector %9.6f %9.6f %9.6f\n", eigen.eigenvector.x, eigen.eigenvector.y, eigen.eigenvector.z);
 
-	float det = math_rotation_matrix_determinant(&m1);
-	bool determinant_valid = math_rotation_matrix_in_range(det);
+	float det = matrix_rotation_matrix_determinant(&m1);
+	bool determinant_valid = matrix_rotation_matrix_in_range(det);
 	assert(determinant_valid);
 	//assert(det == 1.0);
 
@@ -112,7 +113,7 @@ void test_transition() {
 	ea.roll_x = 45 * MAX_RAD / 180;
 	ea.pitch_y = 45 * MAX_RAD / 180;
 	ea.yaw_z = 45 * MAX_RAD / 180;
-	Matrix3D_t rot_mat = *ahrs_get_rotation_matrix(ea.roll_x, ea.pitch_y,
+	Matrix3D_t rot_mat = *matrix_get_rotation_matrix(ea.roll_x, ea.pitch_y,
 			ea.yaw_z);
 
 	Vector3D_t vec;
@@ -121,7 +122,7 @@ void test_transition() {
 	vec.z = 2.0;
 
 	Vector3D_t out;
-	ahrs_rotation_matrix_vector_product(&rot_mat, &vec, &out);
+	matrix_rotation_matrix_vector_product(&rot_mat, &vec, &out);
 	//printf("Vector product: %9.6f, %9.6f, %9.6f\n", out.x, out.y, out.z);
 }
 

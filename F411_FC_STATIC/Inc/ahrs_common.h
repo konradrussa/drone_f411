@@ -38,8 +38,7 @@ EulerAngle_t* ahrs_get_euler_derivatives(float phi, float theta, float p,
 		float q, float r);
 Vector3D_t* ahrs_get_weighted_average(const AxesWeightedAverage_t *avg1,
 		const AxesWeightedAverage_t *avg2);
-Matrix3D_t* ahrs_get_rotation_matrix(float phi, float theta, float psi);
-void ahrs_rotation_matrix_vector_product(const Matrix3D_t *matrix,
-		const Vector3D_t *vector, Vector3D_t *out);
+void ahrs_eigen(const Matrix3D_t *matrix, const Vector3D_t *vector,
+		Eigen_t *eigen);
 
 #endif /* AHRS_COMMON_H_ */

@@ -8,6 +8,7 @@
 #include "env.h"
 #include "drone.h"
 #include "timer.h"
+#include "matrix.h"
 #include "ahrs_common.h"
 #include "flight_control_common.h"
 
@@ -98,16 +99,15 @@ static void update_mp_fun(struct MpControl *control) {
 	float base_drag_force = 1.0 / 2.0 * get_ro() * get_front_area()
 			* drag_coefficience; // * v^2 * uv
 
-	Matrix3D_t *rot_mat = ahrs_get_rotation_matrix(control->angles.roll_x,
+	Matrix3D_t *rot_mat = matrix_get_rotation_matrix(control->angles.roll_x,
 			control->angles.pitch_y, control->angles.yaw_z);
 
 	Vector3D_t thrusts = { control->thrust_cruise, 0.0, control->thrust_vtol };
 
 	Vector3D_t forces;
-	ahrs_rotation_matrix_vector_product(rot_mat, &thrusts, &forces);
+	matrix_rotation_matrix_vector_product(rot_mat, &thrusts, &forces);
 
-	mpVar.control->thrust = math_sqrt(
-			forces.z * forces.z + forces.y * forces.y + forces.x * forces.x); // + EDF force + VTOL force + Cruise model force
+	mpVar.control->thrust = math_vec_mag(&forces); // + EDF force + VTOL force + Cruise model force
 
 	float drag_force = 0.0;
 	float acceleration_x = 0.0;

@@ -24,104 +24,9 @@ float beta = 0.1f;		// 2 * proportional gain;
 static EulerAngle_t euler_derivatives;
 static Vector3D_t weighted_average;
 
-static Matrix3D_t mat_product = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
-		0.0, 0.0 } }; 		//3x3
-static Matrix3D_t rot_mat_X = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
-		0.0, 0.0 } }; //3x3
-static Matrix3D_t rot_mat_Y = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
-		0.0, 0.0 } }; 		//3x3
-static Matrix3D_t rot_mat_Z = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
-		0.0, 0.0 } }; 		//3x3
-
-static Eigen_t eigen;
-
 static float ahrs_weighted_average(int16_t axis1, int priority1, int16_t axis2,
 		int priority2) {
 	return (axis1 * priority1 + axis2 * priority2) / (priority1 + priority2);
-}
-
-static void ahrs_create_rotation_matrix_X(float phi, float theta, float psi) {
-	rot_mat_X.row0[0] = 1.0;
-	rot_mat_X.row0[1] = 0.0;
-	rot_mat_X.row0[2] = 0.0;
-	rot_mat_X.row1[0] = 0.0;
-	rot_mat_X.row1[1] = cosf(phi);
-	rot_mat_X.row1[2] = -sinf(phi);
-	rot_mat_X.row2[0] = 0.0;
-	rot_mat_X.row2[1] = sinf(phi);
-	rot_mat_X.row2[2] = cosf(phi);
-}
-
-static void ahrs_create_rotation_matrix_Y(float phi, float theta, float psi) {
-	rot_mat_Y.row0[0] = cosf(theta);
-	rot_mat_Y.row0[1] = 0.0;
-	rot_mat_Y.row0[2] = sinf(theta);
-	rot_mat_Y.row1[0] = 0.0;
-	rot_mat_Y.row1[1] = 1.0;
-	rot_mat_Y.row1[2] = 0.0;
-	rot_mat_Y.row2[0] = -sinf(theta);
-	rot_mat_Y.row2[1] = 0.0;
-	rot_mat_Y.row2[2] = cosf(theta);
-}
-
-static void ahrs_create_rotation_matrix_Z(float phi, float theta, float psi) {
-	rot_mat_Z.row0[0] = cosf(psi);
-	rot_mat_Z.row0[1] = -sinf(psi);
-	rot_mat_Z.row0[2] = 0.0;
-	rot_mat_Z.row1[0] = sinf(psi);
-	rot_mat_Z.row1[1] = cosf(psi);
-	rot_mat_Z.row1[2] = 0.0;
-	rot_mat_Z.row2[0] = 0.0;
-	rot_mat_Z.row2[1] = 0.0;
-	rot_mat_Z.row2[2] = 1.0;
-}
-
-static void ahrs_multiply_rotation_matrix(const Matrix3D_t *mat1,
-		const Matrix3D_t *mat2, Matrix3D_t *mat_prod) {
-	//rows * cols
-	mat_prod->row0[0] = mat1->row0[0] * mat2->row0[0]
-			+ mat1->row0[1] * mat2->row1[0] + mat1->row0[2] * mat2->row2[0];
-	mat_prod->row0[1] = mat1->row0[0] * mat2->row0[1]
-			+ mat1->row0[1] * mat2->row1[1] + mat1->row0[2] * mat2->row2[1];
-	mat_prod->row0[2] = mat1->row0[0] * mat2->row0[2]
-			+ mat1->row0[1] * mat2->row1[2] + mat1->row0[2] * mat2->row2[2];
-
-	mat_prod->row1[0] = mat1->row1[0] * mat2->row0[0]
-			+ mat1->row1[1] * mat2->row1[0] + mat1->row1[2] * mat2->row2[0];
-	mat_prod->row1[1] = mat1->row1[0] * mat2->row0[1]
-			+ mat1->row1[1] * mat2->row1[1] + mat1->row1[2] * mat2->row2[1];
-	mat_prod->row1[2] = mat1->row1[0] * mat2->row0[2]
-			+ mat1->row1[1] * mat2->row1[2] + mat1->row1[2] * mat2->row2[2];
-
-	mat_prod->row2[0] = mat1->row2[0] * mat2->row0[0]
-			+ mat1->row2[1] * mat2->row1[0] + mat1->row2[2] * mat2->row2[0];
-	mat_prod->row2[1] = mat1->row2[0] * mat2->row0[1]
-			+ mat1->row2[1] * mat2->row1[1] + mat1->row2[2] * mat2->row2[1];
-	mat_prod->row2[2] = mat1->row2[0] * mat2->row0[2]
-			+ mat1->row2[1] * mat2->row1[2] + mat1->row2[2] * mat2->row2[2];
-}
-
-Matrix3D_t* ahrs_get_rotation_matrix(float phi, float theta, float psi) {
-	//Generate the rotation matrix for the given roll, pitch and yaw angles
-	ahrs_create_rotation_matrix_X(phi, theta, psi);
-	ahrs_create_rotation_matrix_Y(phi, theta, psi);
-	ahrs_create_rotation_matrix_Z(phi, theta, psi);
-	//yaw + pitch * roll
-	Matrix3D_t pitch_roll_product = { { 0.0 }, { 0.0 }, { 0.0 } }; 		//3x3
-	ahrs_multiply_rotation_matrix(&rot_mat_Y, &rot_mat_X, &pitch_roll_product);	//pitch * roll
-	ahrs_multiply_rotation_matrix(&rot_mat_Z, &pitch_roll_product,
-			&mat_product);		//yaw * pitch * roll
-	return &mat_product;
-}
-
-void ahrs_rotation_matrix_vector_product(const Matrix3D_t *matrix,
-		const Vector3D_t *vector, Vector3D_t *out) {
-	out->x = matrix->row0[0] * vector->x + matrix->row0[1] * vector->y
-			+ matrix->row0[2] * vector->z;
-	out->y = matrix->row1[0] * vector->x + matrix->row1[1] * vector->y
-			+ matrix->row1[2] * vector->z;
-	out->z = matrix->row2[0] * vector->x + matrix->row2[1] * vector->y
-			+ matrix->row2[2] * vector->z;
 }
 
 EulerAngle_t* ahrs_get_euler_derivatives(float phi, float theta, float p,
@@ -144,6 +49,58 @@ Vector3D_t* ahrs_get_weighted_average(const AxesWeightedAverage_t *avg1,
 	weighted_average.z = ahrs_weighted_average(avg1->axis->AXIS_Z,
 			avg1->priority, avg2->axis->AXIS_Z, avg2->priority);
 	return &weighted_average;
+}
+
+// power method, matrix order 3 (3x3)
+void ahrs_eigen(const Matrix3D_t *matrix, const Vector3D_t *vector,
+		Eigen_t *eigen) {
+	float zmax = 0.0, emax = 0.0;
+	Vector3D_t vec_x = *vector;
+	Vector3D_t vec_z = { 0.0, 0.0, 0.0 };
+	Vector3D_t vec_e = { 0.0, 0.0, 0.0 };
+
+	do {
+		//dot product
+		vec_z.x += matrix->row0[0] * vec_x.x;
+		vec_z.x += matrix->row0[1] * vec_x.y;
+		vec_z.x += matrix->row0[2] * vec_x.z;
+
+		vec_z.y += matrix->row1[0] * vec_x.x;
+		vec_z.y += matrix->row1[1] * vec_x.y;
+		vec_z.y += matrix->row1[2] * vec_x.z;
+
+		vec_z.z += matrix->row2[0] * vec_x.x;
+		vec_z.z += matrix->row2[1] * vec_x.y;
+		vec_z.z += matrix->row2[2] * vec_x.z;
+
+		zmax = fabs(vec_z.x);
+		if (fabs(vec_z.y) > zmax)
+			zmax = fabs(vec_z.y);
+		if (fabs(vec_z.z) > zmax)
+			zmax = fabs(vec_z.z);
+
+		vec_z.x /= zmax;
+		vec_z.y /= zmax;
+		vec_z.z /= zmax;
+
+		vec_e.x = fabs(fabs(vec_z.x) - fabs(vec_x.x));
+		vec_e.y = fabs(fabs(vec_z.y) - fabs(vec_x.y));
+		vec_e.z = fabs(fabs(vec_z.z) - fabs(vec_x.z));
+
+		emax = vec_e.x;
+		if (vec_e.y > emax)
+			emax = vec_e.y;
+		if (vec_e.z > emax)
+			emax = vec_e.z;
+
+		vec_x.x = vec_z.x;
+		vec_x.y = vec_z.y;
+		vec_x.z = vec_z.z;
+
+	} while (emax > EPSILON_2);
+
+	eigen->eigenvector = vec_z;
+	eigen->eigenvalue = zmax;
 }
 
 // Madgwick AHRS

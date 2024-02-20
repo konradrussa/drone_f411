@@ -42,9 +42,10 @@ void ahrs_fusion_agm(const AxesRaw_t *accel, const AxesRaw_t *gyro, const AxesRa
 	gyf = ((float) gyro->AXIS_Y) * ((float) COE_DPS_TO_RADPS);
 	gzf = ((float) gyro->AXIS_Z) * ((float) COE_DPS_TO_RADPS);
 
+	// AG: X north Y East Z Up, M: Y North X East Z Up
 	mxf = (float) mag->AXIS_X * ((float) COE_DPS_TO_RADPS);
 	myf = (float) mag->AXIS_Y * ((float) COE_DPS_TO_RADPS);
-	mzf = -(float) mag->AXIS_Z * ((float) COE_DPS_TO_RADPS); // FIXME check sign and rotation direction
+	mzf = (float) mag->AXIS_Z * ((float) COE_DPS_TO_RADPS); // TODO check sign and rotation direction
 
 	// Rate of change of quaternion from gyroscope
 	qDot1 = (-q1 * gxf - q2 * gyf - q3 * gxf) * 0.5f;

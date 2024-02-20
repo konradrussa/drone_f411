@@ -49,13 +49,8 @@ int16_t math_max(int16_t val1, int16_t val2);
 int16_t math_min(int16_t val1, int16_t val2);
 float sign0(float value);
 float sign1(float value);
-bool math_rotation_matrix_in_range(float det);
-float math_rotation_matrix_determinant(const Matrix3D_t *matrix);
-void math_eigen(const Matrix3D_t *matrix, const Vector3D_t *vector,
-		Eigen_t *eigen);
 double math_mean(int length, double data, ...);
 double math_stddev(int length, double mean, double data, ...);
-
 float math_vec_mag(Vector3D_t *vec);
 
 #endif /* __BASIC_MATH_H_ */
