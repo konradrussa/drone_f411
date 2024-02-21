@@ -34,6 +34,7 @@ void flight_imu_calibration(bool use_magnetometer, uint32_t last_tick,
 	gyro_data[1].AXIS_X = imu->gyro_data[1].x;
 	gyro_data[1].AXIS_Y = imu->gyro_data[1].y;
 	gyro_data[1].AXIS_Z = imu->gyro_data[1].z;
+
 	if (use_magnetometer) { // AG: X north Y East Z Up, M: Y North X East Z Up
 		mag_data[0].AXIS_X = imu->mag_data[0].y;
 		mag_data[0].AXIS_Y = imu->mag_data[0].x;

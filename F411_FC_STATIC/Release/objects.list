@@ -6,6 +6,7 @@
 "./Src/drone.o"
 "./Src/env.o"
 "./Src/flight_control_common.o"
+"./Src/flight_estimation_common.o"
 "./Src/init.o"
 "./Src/matrix.o"
 "./Src/quaternion.o"

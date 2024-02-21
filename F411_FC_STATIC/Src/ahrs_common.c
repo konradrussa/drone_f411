@@ -61,17 +61,17 @@ void ahrs_eigen(const Matrix3D_t *matrix, const Vector3D_t *vector,
 
 	do {
 		//dot product
-		vec_z.x += matrix->row0[0] * vec_x.x;
-		vec_z.x += matrix->row0[1] * vec_x.y;
-		vec_z.x += matrix->row0[2] * vec_x.z;
+		vec_z.x += matrix->rows.row0[0] * vec_x.x;
+		vec_z.x += matrix->rows.row0[1] * vec_x.y;
+		vec_z.x += matrix->rows.row0[2] * vec_x.z;
 
-		vec_z.y += matrix->row1[0] * vec_x.x;
-		vec_z.y += matrix->row1[1] * vec_x.y;
-		vec_z.y += matrix->row1[2] * vec_x.z;
+		vec_z.y += matrix->rows.row1[0] * vec_x.x;
+		vec_z.y += matrix->rows.row1[1] * vec_x.y;
+		vec_z.y += matrix->rows.row1[2] * vec_x.z;
 
-		vec_z.z += matrix->row2[0] * vec_x.x;
-		vec_z.z += matrix->row2[1] * vec_x.y;
-		vec_z.z += matrix->row2[2] * vec_x.z;
+		vec_z.z += matrix->rows.row2[0] * vec_x.x;
+		vec_z.z += matrix->rows.row2[1] * vec_x.y;
+		vec_z.z += matrix->rows.row2[2] * vec_x.z;
 
 		zmax = fabs(vec_z.x);
 		if (fabs(vec_z.y) > zmax)

@@ -45,6 +45,7 @@
 "./Static_Src/drone.o"
 "./Static_Src/env.o"
 "./Static_Src/flight_control_common.o"
+"./Static_Src/flight_estimation_common.o"
 "./Static_Src/init.o"
 "./Static_Src/matrix.o"
 "./Static_Src/quaternion.o"

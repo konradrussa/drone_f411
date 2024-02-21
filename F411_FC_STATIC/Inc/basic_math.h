@@ -19,10 +19,13 @@ typedef struct Vector3D {
 	float z;
 } Vector3D_t;
 
-typedef struct Matrix3D {
-	float row0[3];
-	float row1[3];
-	float row2[3];
+typedef union Matrix3D_u {
+	float matrix[3][3];
+	struct Matrix3D {
+		float row0[3];
+		float row1[3];
+		float row2[3];
+	} rows;
 } Matrix3D_t;
 
 typedef struct Eigen {

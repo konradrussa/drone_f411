@@ -179,6 +179,7 @@ int main(void) {
 // ahrs
 //		flight_ahrs();
 		diff_sec = timer_rtc_diff_sec(last_rtc);
+		HAL_Delay(300);
 	}
 	/* USER CODE END WHILE */
 

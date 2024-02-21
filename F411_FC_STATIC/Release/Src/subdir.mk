@@ -12,6 +12,7 @@ C_SRCS += \
 ../Src/drone.c \
 ../Src/env.c \
 ../Src/flight_control_common.c \
+../Src/flight_estimation_common.c \
 ../Src/init.c \
 ../Src/matrix.c \
 ../Src/quaternion.c \
@@ -26,6 +27,7 @@ OBJS += \
 ./Src/drone.o \
 ./Src/env.o \
 ./Src/flight_control_common.o \
+./Src/flight_estimation_common.o \
 ./Src/init.o \
 ./Src/matrix.o \
 ./Src/quaternion.o \
@@ -40,6 +42,7 @@ C_DEPS += \
 ./Src/drone.d \
 ./Src/env.d \
 ./Src/flight_control_common.d \
+./Src/flight_estimation_common.d \
 ./Src/init.d \
 ./Src/matrix.d \
 ./Src/quaternion.d \
@@ -54,7 +57,7 @@ Src/%.o Src/%.su Src/%.cyclo: ../Src/%.c Src/subdir.mk
 clean: clean-Src
 
 clean-Src:
-	-$(RM) ./Src/ahrs_common.cyclo ./Src/ahrs_common.d ./Src/ahrs_common.o ./Src/ahrs_common.su ./Src/basic_math.cyclo ./Src/basic_math.d ./Src/basic_math.o ./Src/basic_math.su ./Src/bmi160.cyclo ./Src/bmi160.d ./Src/bmi160.o ./Src/bmi160.su ./Src/bridge_common.cyclo ./Src/bridge_common.d ./Src/bridge_common.o ./Src/bridge_common.su ./Src/drone.cyclo ./Src/drone.d ./Src/drone.o ./Src/drone.su ./Src/env.cyclo ./Src/env.d ./Src/env.o ./Src/env.su ./Src/flight_control_common.cyclo ./Src/flight_control_common.d ./Src/flight_control_common.o ./Src/flight_control_common.su ./Src/init.cyclo ./Src/init.d ./Src/init.o ./Src/init.su ./Src/matrix.cyclo ./Src/matrix.d ./Src/matrix.o ./Src/matrix.su ./Src/quaternion.cyclo ./Src/quaternion.d ./Src/quaternion.o ./Src/quaternion.su ./Src/queue.cyclo ./Src/queue.d ./Src/queue.o ./Src/queue.su ./Src/timer.cyclo ./Src/timer.d ./Src/timer.o ./Src/timer.su
+	-$(RM) ./Src/ahrs_common.cyclo ./Src/ahrs_common.d ./Src/ahrs_common.o ./Src/ahrs_common.su ./Src/basic_math.cyclo ./Src/basic_math.d ./Src/basic_math.o ./Src/basic_math.su ./Src/bmi160.cyclo ./Src/bmi160.d ./Src/bmi160.o ./Src/bmi160.su ./Src/bridge_common.cyclo ./Src/bridge_common.d ./Src/bridge_common.o ./Src/bridge_common.su ./Src/drone.cyclo ./Src/drone.d ./Src/drone.o ./Src/drone.su ./Src/env.cyclo ./Src/env.d ./Src/env.o ./Src/env.su ./Src/flight_control_common.cyclo ./Src/flight_control_common.d ./Src/flight_control_common.o ./Src/flight_control_common.su ./Src/flight_estimation_common.cyclo ./Src/flight_estimation_common.d ./Src/flight_estimation_common.o ./Src/flight_estimation_common.su ./Src/init.cyclo ./Src/init.d ./Src/init.o ./Src/init.su ./Src/matrix.cyclo ./Src/matrix.d ./Src/matrix.o ./Src/matrix.su ./Src/quaternion.cyclo ./Src/quaternion.d ./Src/quaternion.o ./Src/quaternion.su ./Src/queue.cyclo ./Src/queue.d ./Src/queue.o ./Src/queue.su ./Src/timer.cyclo ./Src/timer.d ./Src/timer.o ./Src/timer.su
 
 .PHONY: clean-Src
 
