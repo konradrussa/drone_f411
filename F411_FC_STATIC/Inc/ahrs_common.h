@@ -17,10 +17,6 @@ typedef struct AhrsState {
 	EulerAngle_t ea;        // Current angle rate @ body frame
 } AhrsState_t;
 
-typedef struct GyroRad {
-	float gx, gy, gz;
-} GyroRad_t;
-
 typedef struct AxesRaw {
 	int16_t AXIS_X;
 	int16_t AXIS_Y;

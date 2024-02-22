@@ -19,7 +19,7 @@ Matrix3D_t matrix_rotation_matrix_IwrtB(const Quaternion_t *q);
 Matrix3D_t matrix_rotation_matrix_BwrtI(const Quaternion_t *q);
 void matrix_transpose(Matrix3D_t *matrix);
 Matrix3D_t matrix_inverse(const Matrix3D_t *matrix);
-Matrix3D_t matrix_multiply_matrix(Matrix3D_t *matrix1,
+Matrix3D_t matrix_multiply_matrix(const Matrix3D_t *matrix1,
 		const Matrix3D_t *matrix2);
 
 #endif /* MATRIX_H_ */

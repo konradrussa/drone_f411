@@ -10,7 +10,7 @@
 static Matrix3D_t mat_product = { .rows = { { 0.0, 0.0, 0.0 },
 		{ 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 } } }; 		//3x3
 static Matrix3D_t rot_mat_X = { .rows = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 },
-		{ 0.0, 0.0, 0.0 } } }; //3x3
+		{ 0.0, 0.0, 0.0 } } }; 		//3x3
 static Matrix3D_t rot_mat_Y = { .rows = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 },
 		{ 0.0, 0.0, 0.0 } } }; 		//3x3
 static Matrix3D_t rot_mat_Z = { .rows = { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 },
@@ -86,7 +86,7 @@ static void matrix_multiply_rotation_matrix(const Matrix3D_t *mat1,
 			+ mat1->rows.row2[2] * mat2->rows.row2[2];
 }
 
-static Matrix3D_t* matrix_add(Matrix3D_t *matrix1, Matrix3D_t *matrix2) {
+static Matrix3D_t* matrix_add(Matrix3D_t *matrix1, const Matrix3D_t *matrix2) {
 	matrix1->rows.row0[0] += matrix2->rows.row0[0];
 	matrix1->rows.row0[1] += matrix2->rows.row0[1];
 	matrix1->rows.row0[2] += matrix2->rows.row0[2];
@@ -274,7 +274,7 @@ void matrix_transpose(Matrix3D_t *matrix) {
 	matrix->rows.row2[1] = r12;
 }
 
-Matrix3D_t matrix_multiply_matrix(Matrix3D_t *matrix1,
+Matrix3D_t matrix_multiply_matrix(const Matrix3D_t *matrix1,
 		const Matrix3D_t *matrix2) {
 	Matrix3D_t mat_prod;
 	matrix_multiply_rotation_matrix(matrix1, matrix2, &mat_prod);

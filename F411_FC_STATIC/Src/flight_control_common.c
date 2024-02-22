@@ -4,7 +4,6 @@
  *  Created on: Feb 5, 2024
  *      Author: konrad
  */
-#include <stdbool.h>
 #include "env.h"
 #include "drone.h"
 #include "timer.h"

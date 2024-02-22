@@ -5,19 +5,38 @@
  *      Author: konrad
  */
 
-#include "flight_estimation_common.h"
+#include "env.h"
+#include "drone.h"
+#include "timer.h"
 #include "matrix.h"
+#include "ahrs_common.h"
+#include "flight_estimation_common.h"
 
-//accx =  1g * sin(theta) * cos(phi)
-//accy = -1g * sin(theta) * sin(phi)
-//accz =  1g * cos(theta)
-//accy/accx = -tan(phi)
+static UKF_t ukf_filter;
+
+static void estimation_ukf_predict() {
+	ukf_filter.state.pos.x += ukf_filter.state.vel.x * ukf_filter.dt;
+	ukf_filter.state.pos.y += ukf_filter.state.vel.y * ukf_filter.dt;
+	ukf_filter.state.pos.z += ukf_filter.state.vel.z * ukf_filter.dt;
+}
+
+static void estimation_ukf_update() {
+	//accx =  1g * sin(theta) * cos(phi)
+	//accy = -1g * sin(theta) * sin(phi)
+	//accz =  1g * cos(theta)
+	//accy/accx = -tan(phi)
+}
+
+void estimation_ukf() {
+	estimation_ukf_predict();
+	estimation_ukf_update();
+}
+
+void estimation_blue(const float time[3], const Vector3D_t observations) {
 
 //BLUE - best linear unbiased estimate
-Matrix3D_t blue_model;
-Matrix3D_t blue_covariance;
-
-void estimation_blue(float time[3], Vector3D_t observations) {
+	Matrix3D_t blue_model;
+	Matrix3D_t blue_covariance;
 
 	for (int i = 0; i < 3; i++) {
 
@@ -27,8 +46,7 @@ void estimation_blue(float time[3], Vector3D_t observations) {
 
 		for (int j = 0; j < 3; j++) {
 			if (i == j) {
-				float time_sqrt = math_sqrt(time[i]);
-				blue_covariance.matrix[i][j] = 1.0 * time_sqrt * time_sqrt;
+				blue_covariance.matrix[i][j] = time[i];
 			} else {
 				blue_covariance.matrix[i][j] = 0.0;
 			}
@@ -46,4 +64,8 @@ void estimation_blue(float time[3], Vector3D_t observations) {
 	matrix_rotation_matrix_vector_product(&prod3, &observations, &xhat);
 	Vector3D_t result;
 	matrix_rotation_matrix_vector_product(&blue_model, &xhat, &result);
+}
+
+UKF_t* get_ukf_filter() {
+	return &ukf_filter;
 }
