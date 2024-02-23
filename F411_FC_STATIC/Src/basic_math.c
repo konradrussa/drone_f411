@@ -74,17 +74,22 @@ double math_mean(int length, double data, ...) {
 	return sum / (double) length;
 }
 
-//standard deviation
-double math_stddev(int length, double mean, double data, ...) {
+//variance
+double math_variance(int length, double mean, double data, ...) {
 	va_list stddev_list;
 	va_start(stddev_list, data);
-	double std = powf(data - mean, 2.0);
+	double variance = powf(data - mean, 2.0);
 	for (int i = 0; i < length; i++) {
 		double next_data = va_arg(stddev_list, double);
-		std += powf(next_data - mean, 2.0);
+		variance += powf(next_data - mean, 2.0);
 	}
 	va_end(stddev_list);
-	return math_sqrt(std / (double) length);
+	return variance / (double) length;
+}
+
+//standard deviation
+double math_stddev(int length, double variance) {
+	return math_sqrt(variance / (double) length);
 }
 
 // vector magnitude

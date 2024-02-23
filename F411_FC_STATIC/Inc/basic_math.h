@@ -53,7 +53,8 @@ int16_t math_min(int16_t val1, int16_t val2);
 float sign0(float value);
 float sign1(float value);
 double math_mean(int length, double data, ...);
-double math_stddev(int length, double mean, double data, ...);
+double math_variance(int length, double mean, double data, ...);
+double math_stddev(int length, double variance);
 float math_vec_mag(Vector3D_t *vec);
 
 #endif /* __BASIC_MATH_H_ */
