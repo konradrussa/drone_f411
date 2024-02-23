@@ -20,7 +20,8 @@ extern int16_t gTHR;
 extern float ahrs_kp;
 extern const float AHRS_KP_BIG;
 extern const float AHRS_KP_NORM;
-const float drag_coefficience = 0.1; // TODO calculate model drag force 1/2 * ro * A * Cd * v * uv
+
+const float drag_coefficience = 0.1; // calculate model drag force 1/2 * ro * A * Cd * v * uv
 
 const float pid_kp = 0.0003;
 const float pid_ki = 0.002;
@@ -28,14 +29,12 @@ const float pid_kd = 0.001;
 
 const float sm_kp_norm = 4.2;
 const float sm_kp_big = 107.0;
-
 const float sm_surf_lambda = 0.1; //	sliding surface convergence rate
 
 const float mp_horizon = 5;
 
 const short MIN_THROTTLE_ONESHOT42 = 4210; //or 5200
 const short MIN_THROTTLE_EDF = 1421;
-const short MIN_THROTTLE = 51;
 
 static PidVariable_t pidVar = { 0.0, 0.0, 0.0, 0.0, 0.0, &update_pid_fun };
 static SmVariable_t smVar = { 0.0, 0.0, 0.0, 0.0, &update_sm_fun };

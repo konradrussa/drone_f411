@@ -14,6 +14,9 @@ struct UKF_State {
 	Vector3D_t pos;
 	Vector3D_t vel;
 	Vector3D_t acc;
+	Vector3D_t attitude; //orientation
+	Vector3D_t angular_vel;
+	Vector3D_t angular_acc;
 };
 
 struct UKF_Measurement {
@@ -22,9 +25,16 @@ struct UKF_Measurement {
 	Vector3D_t mag;
 };
 
+struct UKF_Covariance {
+	Vector3D_t acc;
+	Vector3D_t gyro;
+	Vector3D_t mag;
+};
+
 typedef struct UKF {
 	struct UKF_State state;
 	struct UKF_Measurement measurement;
+	struct UKF_Covariance covariance;
 	float dt;
 } UKF_t;
 
