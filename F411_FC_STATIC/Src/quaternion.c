@@ -155,5 +155,5 @@ float quaternion_angular_distance(const Quaternion_t *q1,
 	quaternion_multiply(q1, &qc, &qd);
 	float scalar = qd.q0;
 	float vector_norm = math_sqrt(qd.q1 * qd.q1 + qd.q2 * qd.q2 + qd.q3 * qd.q3);
-	return 2 * atan2f(vector_norm, math_abs(scalar));
+	return 2 * atan2f(vector_norm, math_absf(scalar));
 }

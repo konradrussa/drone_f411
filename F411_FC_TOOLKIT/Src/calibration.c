@@ -140,33 +140,6 @@ void calculate_imu_stddev() {
 	//math_stddev(length, mean, data ...) * math.sqrt(ahrs_get_sampling_time()) // TODO check model /sqrt(Hz)
 }
 
-/*
-//mean
-double math_mean(int length, double data, ...) {
-	va_list mean_list;
-	va_start(mean_list, data);
-	double sum = data;
-	for (int i = 0; i < length; i++) {
-		sum += va_arg(mean_list, double);
-	}
-	va_end(mean_list);
-	return sum / (double) length;
-}
-
-//standard deviation
-double math_stddev(int length, double mean, double data, ...) {
-	va_list stddev_list;
-	va_start(stddev_list, data);
-	double std = powf(data - mean, 2.0);
-	for (int i = 0; i < length; i++) {
-		double next_data = va_arg(stddev_list, double);
-		std += powf(next_data - mean, 2.0);
-	}
-	va_end(stddev_list);
-	return math_sqrt(std / (double) length);
-}
- */
-
 void calculate_gps_noise() {
 
 }

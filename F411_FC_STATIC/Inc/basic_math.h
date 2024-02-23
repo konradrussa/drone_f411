@@ -1,7 +1,7 @@
 #ifndef __BASIC_MATH_H_
 #define __BASIC_MATH_H_
 
-#include <stdarg.h>
+//#include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <tgmath.h>
@@ -52,9 +52,12 @@ int16_t math_max(int16_t val1, int16_t val2);
 int16_t math_min(int16_t val1, int16_t val2);
 float sign0(float value);
 float sign1(float value);
-double math_mean(int length, double data, ...);
-double math_variance(int length, double mean, double data, ...);
-double math_stddev(int length, double variance);
+float math_mean(int length, float *data);
+float math_variance(int length, float mean, float *data);
+float math_stddev(float variance);
+float math_covariance(int length, float *x, float mean_x, float *y, float mean_y);
+float math_correlation(float cov, float stddev_x, float stddev_y);
+float math_pdf_normal(float x, float mean_x, float stddev_x);
 float math_vec_mag(Vector3D_t *vec);
 
 #endif /* __BASIC_MATH_H_ */

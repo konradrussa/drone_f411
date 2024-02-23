@@ -62,37 +62,53 @@ float math_inv_sqrt(float x) {
 	return y;
 }
 
-//mean
-double math_mean(int length, double data, ...) {
-	va_list mean_list;
-	va_start(mean_list, data);
-	double sum = data;
+// mean
+float math_mean(int length, float *data) {
+	//int length = sizeof(data) / sizeof(data[0]);
+	float sum = 0.0;
 	for (int i = 0; i < length; i++) {
-		sum += va_arg(mean_list, double);
+		sum += data[i];
 	}
-	va_end(mean_list);
-	return sum / (double) length;
+	return sum / (float) length;
 }
 
-//variance
-double math_variance(int length, double mean, double data, ...) {
-	va_list stddev_list;
-	va_start(stddev_list, data);
-	double variance = powf(data - mean, 2.0);
+// variance
+float math_variance(int length, float mean, float *data) {
+	//int length = sizeof(data) / sizeof(data[0]);
+	float variance = 0.0;
 	for (int i = 0; i < length; i++) {
-		double next_data = va_arg(stddev_list, double);
-		variance += powf(next_data - mean, 2.0);
+		variance += powf(data[i] - mean, 2.0);
 	}
-	va_end(stddev_list);
-	return variance / (double) length;
+	return variance / (float) length;
 }
 
-//standard deviation
-double math_stddev(int length, double variance) {
-	return math_sqrt(variance / (double) length);
+// standard deviation
+inline float math_stddev(float variance) {
+	return math_sqrt(variance);
+}
+
+// covariance
+float math_covariance(int length, float *x, float mean_x, float *y,
+		float mean_y) {
+	float covariance = 0.0;
+	for (int i = 0; i < length; i++) {
+		covariance += (x[i] - mean_x) * (y[i] - mean_y);
+	}
+	return covariance / (float) length;
+}
+
+// correlation
+inline float math_correlation(float cov, float stddev_x, float stddev_y) {
+	return cov / (stddev_x * stddev_y);
+}
+
+// probability density function of a normal distribution
+inline float math_pdf_normal(float x, float mean_x, float stddev_x) {
+	float exponent = -(powf(x - mean_x, 2.0) / (2 * powf(stddev_x, 2.0)));
+	return expf(exponent) / (stddev_x * math_sqrt(2.0 * M_PI));
 }
 
 // vector magnitude
-float math_vec_mag(Vector3D_t *vec) {
+inline float math_vec_mag(Vector3D_t *vec) {
 	return math_sqrt(vec->x * vec->x + vec->y * vec->y + vec->z * vec->z);
 }

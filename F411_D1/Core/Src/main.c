@@ -186,6 +186,7 @@ int main(void)
 			char *data = bridge_get_queues_data();
 
 			free(data);
+			data = NULL;
 		}
 		diff_us = timer_tim4_diff_us(last_tick);
 		diff_sec = timer_rtc_diff_sec(last_rtc);

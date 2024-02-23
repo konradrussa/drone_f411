@@ -226,6 +226,7 @@ inline HAL_StatusTypeDef motor_deinit(MOTOR_t *motor) {
 				motor->pwm_channel);
 		if (HAL_OK == status) {
 			free(motor->buffer);
+			motor->buffer = NULL;
 		}
 		return status;
 	} else {

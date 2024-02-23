@@ -122,7 +122,7 @@ void test_transition() {
 	vec.z = 2.0;
 
 	Vector3D_t out;
-	matrix_rotation_matrix_vector_product(&rot_mat, &vec, &out);
+	matrix_vector_product(&rot_mat, &vec, &out);
 	//printf("Vector product: %9.6f, %9.6f, %9.6f\n", out.x, out.y, out.z);
 }
 

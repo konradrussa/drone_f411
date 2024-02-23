@@ -93,9 +93,9 @@ static Matrix3D_t* matrix_add(Matrix3D_t *matrix1, const Matrix3D_t *matrix2) {
 	matrix1->rows.row1[0] += matrix2->rows.row1[0];
 	matrix1->rows.row1[1] += matrix2->rows.row1[1];
 	matrix1->rows.row1[2] += matrix2->rows.row1[2];
-	matrix1->rows.row1[0] += matrix2->rows.row1[0];
-	matrix1->rows.row1[1] += matrix2->rows.row1[1];
-	matrix1->rows.row1[2] += matrix2->rows.row1[2];
+	matrix1->rows.row2[0] += matrix2->rows.row2[0];
+	matrix1->rows.row2[1] += matrix2->rows.row2[1];
+	matrix1->rows.row2[2] += matrix2->rows.row2[2];
 	return matrix1;
 }
 
@@ -106,9 +106,9 @@ static Matrix3D_t* matrix_multiply_scalar(Matrix3D_t *matrix, const float a) {
 	matrix->rows.row1[0] *= a;
 	matrix->rows.row1[1] *= a;
 	matrix->rows.row1[2] *= a;
-	matrix->rows.row1[0] *= a;
-	matrix->rows.row1[1] *= a;
-	matrix->rows.row1[2] *= a;
+	matrix->rows.row2[0] *= a;
+	matrix->rows.row2[1] *= a;
+	matrix->rows.row2[2] *= a;
 	return matrix;
 }
 
@@ -120,9 +120,9 @@ static Matrix3D_t matrix_identity() {
 	matrix.rows.row1[0] = 0.0f;
 	matrix.rows.row1[1] = 1.0f;
 	matrix.rows.row1[2] = 0.0f;
-	matrix.rows.row1[0] = 0.0f;
-	matrix.rows.row1[1] = 0.0f;
-	matrix.rows.row1[2] = 1.0f;
+	matrix.rows.row2[0] = 0.0f;
+	matrix.rows.row2[1] = 0.0f;
+	matrix.rows.row2[2] = 1.0f;
 	return matrix;
 }
 
@@ -135,13 +135,13 @@ static Matrix3D_t matrix_skew_symmetric_from_scalar(const float a,
 	matrix.rows.row1[0] = c;
 	matrix.rows.row1[1] = 0.0f;
 	matrix.rows.row1[2] = -a;
-	matrix.rows.row1[0] = -b;
-	matrix.rows.row1[1] = a;
-	matrix.rows.row1[2] = 0.0f;
+	matrix.rows.row2[0] = -b;
+	matrix.rows.row2[1] = a;
+	matrix.rows.row2[2] = 0.0f;
 	return matrix;
 }
 
-static Matrix3D_t matrix_skew_symmetric_from_vector(const Vector3D_t *vec) {
+inline static Matrix3D_t matrix_skew_symmetric_from_vector(const Vector3D_t *vec) {
 	return matrix_skew_symmetric_from_scalar(vec->x, vec->y, vec->z);
 }
 
@@ -192,8 +192,8 @@ float matrix_rotation_matrix_determinant(const Matrix3D_t *matrix) {
 							- matrix->rows.row2[0] * matrix->rows.row1[1]);
 }
 
-void matrix_rotation_matrix_vector_product(const Matrix3D_t *matrix,
-		const Vector3D_t *vector, Vector3D_t *out) {
+void matrix_vector_product(const Matrix3D_t *matrix, const Vector3D_t *vector,
+		Vector3D_t *out) {
 	out->x = matrix->rows.row0[0] * vector->x + matrix->rows.row0[1] * vector->y
 			+ matrix->rows.row0[2] * vector->z;
 	out->y = matrix->rows.row1[0] * vector->x + matrix->rows.row1[1] * vector->y
@@ -228,7 +228,7 @@ Matrix3D_t matrix_rotation_matrix_BwrtI(const Quaternion_t *q) {
 Vector3D_t matrix_solve(const Matrix3D_t *matrix, const Vector3D_t *vector) {
 	Matrix3D_t mat = matrix_inverse(matrix);
 	Vector3D_t out;
-	matrix_rotation_matrix_vector_product(&mat, vector, &out);
+	matrix_vector_product(&mat, vector, &out);
 	return out;
 }
 
@@ -279,4 +279,31 @@ Matrix3D_t matrix_multiply_matrix(const Matrix3D_t *matrix1,
 	Matrix3D_t mat_prod;
 	matrix_multiply_rotation_matrix(matrix1, matrix2, &mat_prod);
 	return mat_prod;
+}
+
+// used to obrain UKF sigma points
+void matrix_cholesky_decomposition(const Matrix3D_t *mat,
+		Matrix3D_t *lower_triangular) {
+	int i, j, k;
+
+	for (i = 0; i < 3; i++) {
+		for (j = 0; j < (i + 1); j++) {
+			float sum = 0.0;
+			if (i == j) {
+				for (k = 0; k < j; k++) {
+					sum += lower_triangular->matrix[j][k]
+							* lower_triangular->matrix[j][k];
+				}
+				lower_triangular->matrix[j][j] = math_sqrt(
+						mat->matrix[j][j] - sum);
+			} else {
+				for (k = 0; k < j; k++) {
+					sum += lower_triangular->matrix[i][k]
+							* lower_triangular->matrix[j][k];
+				}
+				lower_triangular->matrix[i][j] = (mat->matrix[i][j] - sum)
+						/ lower_triangular->matrix[j][j];
+			}
+		}
+	}
 }

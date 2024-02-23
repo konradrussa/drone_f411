@@ -51,6 +51,7 @@ static void bridge_rc_motor_rx_callback(UART_HandleTypeDef *huart) {
 				(char*) fc_bridge.rx_data); // allocate memory
 		// TODO 2 set to motors
 		free(fc_bridge.port->data_in); // deallocate memory
+		fc_bridge.port->data_in = NULL;
 	}
 	// TODO 1 get radio data from queues
 	fc_bridge.port->data_out = bridge_get_queues_data();
@@ -58,6 +59,7 @@ static void bridge_rc_motor_rx_callback(UART_HandleTypeDef *huart) {
 	// TODO process Servo channel GEAR
 	HAL_StatusTypeDef status_transmit = fc_bridge.port->transmit(); // send radio data of motors to flight controller D2
 	free(fc_bridge.port->data_out);
+	fc_bridge.port->data_out = NULL;
 	if (HAL_OK != status_transmit) {
 		raise(bridge_get_transmit_sigint());
 	}

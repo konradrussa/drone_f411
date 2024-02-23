@@ -103,7 +103,7 @@ static void update_mp_fun(struct MpControl *control) {
 	Vector3D_t thrusts = { control->thrust_cruise, 0.0, control->thrust_vtol };
 
 	Vector3D_t forces;
-	matrix_rotation_matrix_vector_product(rot_mat, &thrusts, &forces);
+	matrix_vector_product(rot_mat, &thrusts, &forces);
 
 	mpVar.control->thrust = math_vec_mag(&forces); // + EDF force + VTOL force + Cruise model force
 

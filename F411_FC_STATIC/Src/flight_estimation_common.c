@@ -32,9 +32,9 @@ void estimation_ukf() {
 	estimation_ukf_update();
 }
 
+// BLUE - best linear unbiased estimate
 void estimation_blue(const float time[3], const Vector3D_t observations) {
 
-//BLUE - best linear unbiased estimate
 	Matrix3D_t blue_model;
 	Matrix3D_t blue_covariance;
 
@@ -61,9 +61,9 @@ void estimation_blue(const float time[3], const Vector3D_t observations) {
 	Matrix3D_t prod2 = matrix_multiply_matrix(&prod1, &model_trans);
 	Matrix3D_t prod3 = matrix_multiply_matrix(&prod2, &cov_inv);
 	Vector3D_t xhat;
-	matrix_rotation_matrix_vector_product(&prod3, &observations, &xhat);
+	matrix_vector_product(&prod3, &observations, &xhat);
 	Vector3D_t result;
-	matrix_rotation_matrix_vector_product(&blue_model, &xhat, &result);
+	matrix_vector_product(&blue_model, &xhat, &result);
 }
 
 UKF_t* get_ukf_filter() {
