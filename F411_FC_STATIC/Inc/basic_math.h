@@ -13,11 +13,24 @@
 
 #define MAX_RAD    		3.141592653589793238462643383279502884197 	//	180 degree
 
+typedef struct Vector2D {
+	float x;
+	float y;
+} Vector2D_t;
+
 typedef struct Vector3D {
 	float x;
 	float y;
 	float z;
 } Vector3D_t;
+
+typedef union Matrix2D_u {
+	float matrix[2][2];
+	struct Matrix2D {
+		float row0[2];
+		float row1[2];
+	} rows;
+} Matrix2D_t;
 
 typedef union Matrix3D_u {
 	float matrix[3][3];

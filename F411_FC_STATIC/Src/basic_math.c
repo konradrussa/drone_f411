@@ -38,7 +38,7 @@ float math_sqrt(float x) {
 		float x;
 	} u;
 	u.x = x;
-	u.i = (1 << 29) + (u.i >> 1) - (1 << 22); //initial guess number
+	u.i = (1 << 29) + (u.i >> 1) - (1 << 22); //initial guess number, about half
 
 	// Two Babylonian Steps (simplified from:)
 	// u.x = 0.5f * (u.x + x/u.x);

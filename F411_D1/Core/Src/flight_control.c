@@ -6,11 +6,12 @@
  */
 #include "flight_control_common.h"
 #include "flight_control.h"
+#include "flight_estimation.h"
 
 AhrsState_t ahrsState;
 AxesRaw_t accel, gyro;
 
-void flight_imu_calibration(bool use_magnetometer) {
+void flight_imu_calibration() {
 	IMU_t *imu = get_imu();
 	AxesRaw_t accel_data[2], gyro_data[2];
 	accel_data[0].AXIS_X = imu->accel_data[0].x;
@@ -27,7 +28,9 @@ void flight_imu_calibration(bool use_magnetometer) {
 	gyro_data[1].AXIS_Y = imu->gyro_data[1].y;
 	gyro_data[1].AXIS_Z = imu->gyro_data[1].z;
 
-	calibration(accel_data, gyro_data, NULL, use_magnetometer);
+	calibration(accel_data, gyro_data, NULL);
+	calculate_imu_noise(accel_data, gyro_data, NULL);
+	flight_ukf(accel_data, gyro_data);
 }
 
 void flight_ahrs() {

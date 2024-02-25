@@ -162,7 +162,7 @@ int main(void) {
 		}
 		diff_us = timer_tim4_diff_us(last_tick);
 // process data
-		flight_imu_calibration(true, last_tick, diff_us);
+		flight_imu_calibration(last_tick, diff_us);
 
 //		if (BMP2_OK != bmp280_get_data()) { // FIXME alternated sensing without while/delay
 //			return get_bmp()->result_data;
@@ -187,7 +187,6 @@ int main(void) {
 
 // Deinitialize BUZZER
 //		buzzer_deinit();
-
 	/* USER CODE END 3 */
 }
 

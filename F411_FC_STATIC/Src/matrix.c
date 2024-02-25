@@ -281,7 +281,7 @@ Matrix3D_t matrix_multiply_matrix(const Matrix3D_t *matrix1,
 	return mat_prod;
 }
 
-// used to obrain UKF sigma points
+// used to obtain UKF sigma points
 void matrix_cholesky_decomposition(const Matrix3D_t *mat,
 		Matrix3D_t *lower_triangular) {
 	int i, j, k;

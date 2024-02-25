@@ -7,7 +7,6 @@
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
-#include <stdbool.h>
 #include "basic_math.h"
 #include "ahrs_common.h"
 
@@ -57,11 +56,9 @@ typedef struct IMU_Calibration_3D {
 } IMU_Calibration_3D_t;
 
 void calibration(const AxesRaw_t *accel_data, const AxesRaw_t *gyro_data,
-		const AxesRaw_t *mag_data,
-		bool use_magnetometer);
+		const AxesRaw_t *mag_data);
 void calculate_imu_noise(const AxesRaw_t *accel_data,
-		const AxesRaw_t *gyro_data, const AxesRaw_t *mag_data,
-		bool use_magnetometer);
+		const AxesRaw_t *gyro_data, const AxesRaw_t *mag_data);
 void calculate_imu_stddev(void);
 void calculate_gps_noise(void);
 void calculate_gps_stddev(void);

@@ -9,6 +9,7 @@
 #define FLIGHT_ESTIMATION_COMMON_H_
 
 #include "basic_math.h"
+#include "ahrs_common.h"
 
 struct UKF_State {
 	Vector3D_t pos;
@@ -39,7 +40,8 @@ typedef struct UKF {
 } UKF_t;
 
 //Kalman filter
-void estimation_ukf(void);
+void estimation_ukf(const AxesRaw_t *accel, const AxesRaw_t *gyro,
+		const AxesRaw_t *magnet);
 UKF_t* get_ukf_filter();
 
 //BLUE estimate

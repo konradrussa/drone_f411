@@ -14,7 +14,7 @@ Noise_IMU_t imu_noise = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 		0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 Noise_GPS_t gps_noise = { 0.0, 0.0 };
 
-static void calculateMaxima(bool use_magnetometer) {
+static void calculateMaxima() {
 	imu_calibration.accel_calib.abs_x = math_max(
 			math_abs(imu_calibration.accel_calib.max_x),
 			math_abs(imu_calibration.accel_calib.min_x));
@@ -35,7 +35,7 @@ static void calculateMaxima(bool use_magnetometer) {
 			math_abs(imu_calibration.gyro_calib.max_z),
 			math_abs(imu_calibration.gyro_calib.min_z));
 
-	if (use_magnetometer) {
+	if (imu_calibration.mag_calib.max_x != 0) {
 		imu_calibration.mag_calib.abs_x = math_max(
 				math_abs(imu_calibration.mag_calib.max_x),
 				math_abs(imu_calibration.mag_calib.min_x));
@@ -49,7 +49,7 @@ static void calculateMaxima(bool use_magnetometer) {
 }
 
 void calibration(const AxesRaw_t *accel_data, const AxesRaw_t *gyro_data,
-		const AxesRaw_t *mag_data, bool use_magnetometer) {
+		const AxesRaw_t *mag_data) {
 	int16_t accel_AXIS_X = accel_data->AXIS_X;
 	imu_calibration.accel_calib.max_x = math_max(accel_AXIS_X,
 			imu_calibration.accel_calib.max_x);
@@ -86,30 +86,30 @@ void calibration(const AxesRaw_t *accel_data, const AxesRaw_t *gyro_data,
 	imu_calibration.gyro_calib.min_z = math_min(gyro_AXIS_Z,
 			imu_calibration.gyro_calib.min_z);
 
-	int16_t mag_AXIS_X = mag_data->AXIS_X;
-	imu_calibration.mag_calib.max_x = math_max(mag_AXIS_X,
-			imu_calibration.mag_calib.max_x);
-	imu_calibration.mag_calib.min_x = math_min(mag_AXIS_X,
-			imu_calibration.mag_calib.min_x);
+	if (NULL != mag_data) {
+		int16_t mag_AXIS_X = mag_data->AXIS_X;
+		imu_calibration.mag_calib.max_x = math_max(mag_AXIS_X,
+				imu_calibration.mag_calib.max_x);
+		imu_calibration.mag_calib.min_x = math_min(mag_AXIS_X,
+				imu_calibration.mag_calib.min_x);
 
-	int16_t mag_AXIS_Y = mag_data->AXIS_Y;
-	imu_calibration.mag_calib.max_y = math_max(mag_AXIS_Y,
-			imu_calibration.mag_calib.max_y);
-	imu_calibration.mag_calib.min_y = math_min(mag_AXIS_Y,
-			imu_calibration.mag_calib.min_y);
+		int16_t mag_AXIS_Y = mag_data->AXIS_Y;
+		imu_calibration.mag_calib.max_y = math_max(mag_AXIS_Y,
+				imu_calibration.mag_calib.max_y);
+		imu_calibration.mag_calib.min_y = math_min(mag_AXIS_Y,
+				imu_calibration.mag_calib.min_y);
 
-	int16_t mag_AXIS_Z = mag_data->AXIS_Z;
-	imu_calibration.mag_calib.max_z = math_max(mag_AXIS_Z,
-			imu_calibration.mag_calib.max_z);
-	imu_calibration.mag_calib.min_z = math_min(mag_AXIS_Z,
-			imu_calibration.mag_calib.min_z);
-
-	calculateMaxima(use_magnetometer);
+		int16_t mag_AXIS_Z = mag_data->AXIS_Z;
+		imu_calibration.mag_calib.max_z = math_max(mag_AXIS_Z,
+				imu_calibration.mag_calib.max_z);
+		imu_calibration.mag_calib.min_z = math_min(mag_AXIS_Z,
+				imu_calibration.mag_calib.min_z);
+	}
+	calculateMaxima();
 }
 
 void calculate_imu_noise(const AxesRaw_t *accel_data,
-		const AxesRaw_t *gyro_data, const AxesRaw_t *mag_data,
-		bool use_magnetometer) {
+		const AxesRaw_t *gyro_data, const AxesRaw_t *mag_data) {
 	//gather every tick measurement + cumulative drift
 	imu_noise.n_da_x = (accel_data + 1)->AXIS_X - accel_data->AXIS_X;
 	imu_noise.n_da_y = (accel_data + 1)->AXIS_Y - accel_data->AXIS_Y;
@@ -125,7 +125,7 @@ void calculate_imu_noise(const AxesRaw_t *accel_data,
 	imu_noise.n_ig_y += imu_noise.n_dg_y;
 	imu_noise.n_ig_z += imu_noise.n_dg_z;
 
-	if (use_magnetometer) {
+	if (NULL != mag_data) {
 		imu_noise.n_dm_x = (mag_data + 1)->AXIS_X - mag_data->AXIS_X;
 		imu_noise.n_dm_y = (mag_data + 1)->AXIS_Y - mag_data->AXIS_Y;
 		imu_noise.n_dm_z = (mag_data + 1)->AXIS_Z - mag_data->AXIS_Z;
