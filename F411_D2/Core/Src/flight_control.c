@@ -4,8 +4,8 @@
  *  Created on: Dec 21, 2023
  *      Author: konrad
  */
-#include "flight_control_common.h"
 #include "flight_control.h"
+#include "flight_control_common.h"
 #include "flight_estimation.h"
 
 //EDF 1400 + 21 - 2000
@@ -35,7 +35,7 @@ void flight_imu_calibration(uint32_t last_tick, uint32_t diff_us) {
 	gyro_data[1].AXIS_Y = imu->gyro_data[1].y;
 	gyro_data[1].AXIS_Z = imu->gyro_data[1].z;
 
-	// AG: X north Y East Z Up, M: Y North X East Z Up
+	// AG: X north Y East Z Up, M: Y North X East Z Down
 	mag_data[0].AXIS_X = imu->mag_data[0].y;
 	mag_data[0].AXIS_Y = imu->mag_data[0].x;
 	mag_data[0].AXIS_Z = imu->mag_data[0].z;
@@ -44,7 +44,6 @@ void flight_imu_calibration(uint32_t last_tick, uint32_t diff_us) {
 	mag_data[1].AXIS_Z = imu->mag_data[1].z;
 
 	calibration(accel_data, gyro_data, mag_data);
-	calculate_imu_noise(accel_data, gyro_data, mag_data);
 	flight_ukf(accel_data, gyro_data, mag_data);
 }
 

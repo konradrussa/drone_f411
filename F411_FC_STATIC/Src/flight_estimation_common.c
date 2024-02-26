@@ -5,6 +5,7 @@
  *      Author: konrad
  */
 
+#include "flight_estimation_common.h"
 #include "assert.h"
 #include "env.h"
 #include "drone.h"
@@ -12,9 +13,12 @@
 #include "math.h"
 #include "matrix.h"
 #include "ahrs_common.h"
-#include "flight_estimation_common.h"
 
 static UKF_t ukf_filter;
+
+static float roll;
+static float pitch;
+static float yaw;
 
 static void estimation_ukf_predict() {
 	ukf_filter.state.angular_vel.x += ukf_filter.state.angular_acc.x
@@ -57,8 +61,10 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	ukf_filter.state.acc.y /= acc_magnitude;
 	ukf_filter.state.acc.z /= acc_magnitude;
 
-	float pitch = asinf(-ukf_filter.state.acc.x);
-	float roll = atan2f(ukf_filter.state.acc.y, ukf_filter.state.acc.z);
+	//float pitch_max90 = asinf(-ukf_filter.state.acc.x);
+
+	pitch = atan2f(ukf_filter.state.acc.x, ukf_filter.state.acc.z);
+	roll = atan2f(ukf_filter.state.acc.y, ukf_filter.state.acc.z);
 
 	Vector3D_t mag = { (float) magnet->AXIS_X, (float) magnet->AXIS_Y,
 			(float) magnet->AXIS_Z };
@@ -67,11 +73,12 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	mag.y /= magnet_magnitude;
 	mag.z /= magnet_magnitude;
 
+	// AG: X north Y East Z Up, M: Y North X East Z Down
 	float mx = mag.x * cosf(pitch) + mag.z * sinf(pitch);
-	float my = mag.x * sinf(roll) * sinf(pitch) + mag.y * cosf(roll)
+	float my = mag.y * sinf(roll) * sinf(pitch) + mag.y * cosf(roll)
 			- mag.z * sinf(roll) * cosf(pitch);
 
-	float yaw = atan2f(my, mx);
+	yaw = atan2f(mx, my); //y is north; (my, mx) - x is north
 	// normalize yaw to -pi .. pi
 	if (yaw > M_PI)
 		yaw -= 2.f * M_PI;
@@ -82,8 +89,13 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	ukf_filter.state.angular_vel.y = (float) gyro->AXIS_Y;
 	ukf_filter.state.angular_vel.z = (float) gyro->AXIS_Z;
 
+	roll = roll * 180.0 / MAX_RAD;
+	pitch = pitch * 180.0 / MAX_RAD;
+	yaw = yaw * 180.0 / MAX_RAD;
+
 	float phi = -atan2f((float) accel->AXIS_Y, (float) accel->AXIS_X);
-	float theta = acosf((float) (accel->AXIS_Z - 2025) / get_geo_g());
+	//float theta = acosf((float) (accel->AXIS_Z - 2025) / get_geo_g());
+	float theta = acosf(ukf_filter.state.acc.z / get_geo_g());
 	ukf_filter.state.attitude.x = phi * 180 / MAX_RAD;
 	//ukf_filter.state.attitude.y = psi * 180 / MAX_RAD;
 	ukf_filter.state.attitude.z = theta * 180 / MAX_RAD;

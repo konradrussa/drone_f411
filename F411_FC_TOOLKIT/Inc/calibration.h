@@ -10,6 +10,8 @@
 #include "basic_math.h"
 #include "ahrs_common.h"
 
+#define SAMPLE_SIZE		(50)
+
 typedef struct Calibration_3D {
 	int16_t max_x;
 	int16_t min_x;
@@ -49,18 +51,46 @@ typedef struct Noise_GPS {
 	float lon;
 } Noise_GPS_t;
 
+typedef struct Measurement_3D {
+	float data_x[SAMPLE_SIZE];
+	float data_y[SAMPLE_SIZE];
+	float data_z[SAMPLE_SIZE];
+
+	float mean_x;
+	float mean_y;
+	float mean_z;
+
+	float variance_x;
+	float variance_y;
+	float variance_z;
+
+	float stddev_x;
+	float stddev_y;
+	float stddev_z;
+
+	float cov_x_y;
+	float cov_x_z;
+	float cov_y_z;
+
+	float corr_x_y;
+	float corr_x_z;
+	float corr_y_z;
+
+} Measurement_3D_t;
+
 typedef struct IMU_Calibration_3D {
-	Calibration_3D_t accel_calib;
-	Calibration_3D_t gyro_calib;
-	Calibration_3D_t mag_calib;
+	Calibration_3D_t accel;
+	Calibration_3D_t gyro;
+	Calibration_3D_t mag;
 } IMU_Calibration_3D_t;
+
+typedef struct IMU_Measurement_3D {
+	Measurement_3D_t accel;
+	Measurement_3D_t gyro;
+	Measurement_3D_t mag;
+} IMU_Measurement_3D_t;
 
 void calibration(const AxesRaw_t *accel_data, const AxesRaw_t *gyro_data,
 		const AxesRaw_t *mag_data);
-void calculate_imu_noise(const AxesRaw_t *accel_data,
-		const AxesRaw_t *gyro_data, const AxesRaw_t *mag_data);
-void calculate_imu_stddev(void);
-void calculate_gps_noise(void);
-void calculate_gps_stddev(void);
 
 #endif // CALIBRATION_H
