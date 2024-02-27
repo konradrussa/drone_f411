@@ -15,7 +15,9 @@ struct UKF_State {
 	Vector3D_t pos;
 	Vector3D_t vel;
 	Vector3D_t acc;
+	EulerAngle_t angles;
 	Vector3D_t attitude; //orientation
+	GyroRad_t gyro_angles;
 	Vector3D_t angular_vel;
 	Vector3D_t angular_acc;
 };

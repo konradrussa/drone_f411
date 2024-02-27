@@ -7,6 +7,7 @@
 #include "flight_control.h"
 #include "flight_control_common.h"
 #include "flight_estimation.h"
+#include "flight_estimation_common.h"
 
 //EDF 1400 + 21 - 2000
 //ROTOR 4200 - 8400
@@ -16,6 +17,10 @@ AhrsState_t ahrsState;
 AxesRaw_t accel, gyro, mag;
 
 float compass_deg;
+
+inline static float us_to_second() {
+	return 1e-6;
+}
 
 // process in main for FC training
 void flight_imu_calibration(uint32_t last_tick, uint32_t diff_us) {
@@ -35,7 +40,7 @@ void flight_imu_calibration(uint32_t last_tick, uint32_t diff_us) {
 	gyro_data[1].AXIS_Y = imu->gyro_data[1].y;
 	gyro_data[1].AXIS_Z = imu->gyro_data[1].z;
 
-	// AG: X north Y East Z Up, M: Y North X East Z Down
+	// AG: X north Y East Z Down, M: Y North X East Z Down NWD
 	mag_data[0].AXIS_X = imu->mag_data[0].y;
 	mag_data[0].AXIS_Y = imu->mag_data[0].x;
 	mag_data[0].AXIS_Z = imu->mag_data[0].z;
@@ -44,6 +49,8 @@ void flight_imu_calibration(uint32_t last_tick, uint32_t diff_us) {
 	mag_data[1].AXIS_Z = imu->mag_data[1].z;
 
 	calibration(accel_data, gyro_data, mag_data);
+
+	get_ukf_filter()->dt = diff_us * us_to_second(); // us to second
 	flight_ukf(accel_data, gyro_data, mag_data);
 }
 

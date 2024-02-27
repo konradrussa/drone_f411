@@ -16,9 +16,9 @@
 
 static UKF_t ukf_filter;
 
-static float roll;
-static float pitch;
-static float yaw;
+inline static float rad_to_deg() {
+	return 180.0 / MAX_RAD;
+}
 
 static void estimation_ukf_predict() {
 	ukf_filter.state.angular_vel.x += ukf_filter.state.angular_acc.x
@@ -61,10 +61,25 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	ukf_filter.state.acc.y /= acc_magnitude;
 	ukf_filter.state.acc.z /= acc_magnitude;
 
-	//float pitch_max90 = asinf(-ukf_filter.state.acc.x);
+	float phi = 2.0
+			* atan2f(asinf(ukf_filter.state.acc.y),
+					acosf(ukf_filter.state.acc.x)); // 2* 90 , 1* 45
+	ukf_filter.state.attitude.z = phi * rad_to_deg();
 
-	pitch = atan2f(ukf_filter.state.acc.x, ukf_filter.state.acc.z);
-	roll = atan2f(ukf_filter.state.acc.y, ukf_filter.state.acc.z);
+	float theta = 2.0
+			* atan2f(asinf(ukf_filter.state.acc.y),
+					acosf(-ukf_filter.state.acc.z)); // 2* 90 , 1* 45
+	ukf_filter.state.attitude.y = theta * rad_to_deg();
+
+	float psi = 2.0
+			* atan2f(asinf(ukf_filter.state.acc.x),
+					acosf(-ukf_filter.state.acc.z)); // 2* 90 , 1* 45
+	ukf_filter.state.attitude.x = psi * rad_to_deg();
+
+	ukf_filter.state.angles.pitch_y = atan2f(ukf_filter.state.acc.x,
+			ukf_filter.state.acc.z); //180
+	ukf_filter.state.angles.roll_x = atan2f(ukf_filter.state.acc.y,
+			ukf_filter.state.acc.z); //180
 
 	Vector3D_t mag = { (float) magnet->AXIS_X, (float) magnet->AXIS_Y,
 			(float) magnet->AXIS_Z };
@@ -73,32 +88,43 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	mag.y /= magnet_magnitude;
 	mag.z /= magnet_magnitude;
 
-	// AG: X north Y East Z Up, M: Y North X East Z Down
-	float mx = mag.x * cosf(pitch) + mag.z * sinf(pitch);
-	float my = mag.y * sinf(roll) * sinf(pitch) + mag.y * cosf(roll)
-			- mag.z * sinf(roll) * cosf(pitch);
+	// AG: X north Y East Z Down, M: Y North X East Z Down NWD
+	float mx = mag.x * cosf(ukf_filter.state.angles.pitch_y)
+			+ mag.z * sinf(ukf_filter.state.angles.pitch_y);
+	float my = mag.y * sinf(ukf_filter.state.angles.roll_x)
+			* sinf(ukf_filter.state.angles.pitch_y)
+			+ mag.y * cosf(ukf_filter.state.angles.roll_x)
+			- mag.z * sinf(ukf_filter.state.angles.roll_x)
+					* cosf(ukf_filter.state.angles.pitch_y);
 
-	yaw = atan2f(mx, my); //y is north; (my, mx) - x is north
+	ukf_filter.state.angles.yaw_z = atan2f(mx, my); //y is north; (my, mx) - x is north
+
 	// normalize yaw to -pi .. pi
-	if (yaw > M_PI)
-		yaw -= 2.f * M_PI;
-	if (yaw < -M_PI)
-		yaw += 2.f * M_PI;
+	if (ukf_filter.state.angles.yaw_z > MAX_RAD) {
+		ukf_filter.state.angles.yaw_z -= 2.f * MAX_RAD;
+	} else if (ukf_filter.state.angles.yaw_z < -MAX_RAD) {
+		ukf_filter.state.angles.yaw_z += 2.f * MAX_RAD;
+	}
+
+	ukf_filter.state.angles.roll_x *= rad_to_deg();
+	ukf_filter.state.angles.pitch_y *= rad_to_deg();
+	ukf_filter.state.angles.yaw_z *= rad_to_deg();
 
 	ukf_filter.state.angular_vel.x = (float) gyro->AXIS_X;
 	ukf_filter.state.angular_vel.y = (float) gyro->AXIS_Y;
 	ukf_filter.state.angular_vel.z = (float) gyro->AXIS_Z;
 
-	roll = roll * 180.0 / MAX_RAD;
-	pitch = pitch * 180.0 / MAX_RAD;
-	yaw = yaw * 180.0 / MAX_RAD;
+	EulerAngle_t gyro_angles = *ahrs_get_euler_derivatives(phi, theta,
+			ukf_filter.state.angular_vel.x, ukf_filter.state.angular_vel.y,
+			ukf_filter.state.angular_vel.z);
 
-	float phi = -atan2f((float) accel->AXIS_Y, (float) accel->AXIS_X);
-	//float theta = acosf((float) (accel->AXIS_Z - 2025) / get_geo_g());
-	float theta = acosf(ukf_filter.state.acc.z / get_geo_g());
-	ukf_filter.state.attitude.x = phi * 180 / MAX_RAD;
-	//ukf_filter.state.attitude.y = psi * 180 / MAX_RAD;
-	ukf_filter.state.attitude.z = theta * 180 / MAX_RAD;
+	//to degree
+	ukf_filter.state.gyro_angles.gz = gyro_angles.yaw_z * ukf_filter.dt
+			* rad_to_deg();
+	ukf_filter.state.gyro_angles.gy = gyro_angles.pitch_y * ukf_filter.dt
+			* rad_to_deg();
+	ukf_filter.state.gyro_angles.gx = gyro_angles.roll_x * ukf_filter.dt
+			* rad_to_deg();
 
 //	float check_x = get_geo_g() + sinf(theta) * cosf(phi);
 //	//assert(accel->x == check_x);
