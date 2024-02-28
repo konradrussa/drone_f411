@@ -19,7 +19,8 @@ struct UKF_State {
 	Vector3D_t attitude; //orientation
 	GyroRad_t gyro_angles;
 	Vector3D_t angular_vel;
-	Vector3D_t angular_acc;
+	float accx_to_sin_theta;
+	float accy_to_sin_theta;
 };
 
 struct UKF_Measurement {

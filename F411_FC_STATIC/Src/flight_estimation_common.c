@@ -21,12 +21,6 @@ inline static float rad_to_deg() {
 }
 
 static void estimation_ukf_predict() {
-	ukf_filter.state.angular_vel.x += ukf_filter.state.angular_acc.x
-			* ukf_filter.dt;
-	ukf_filter.state.angular_vel.y += ukf_filter.state.angular_acc.y
-			* ukf_filter.dt;
-	ukf_filter.state.angular_vel.z += ukf_filter.state.angular_acc.z
-			* ukf_filter.dt;
 
 	ukf_filter.state.attitude.x += ukf_filter.state.angular_vel.x
 			* ukf_filter.dt;
@@ -81,6 +75,11 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	ukf_filter.state.angles.roll_x = atan2f(ukf_filter.state.acc.y,
 			ukf_filter.state.acc.z); //180
 
+	ukf_filter.state.accx_to_sin_theta = ukf_filter.state.acc.x
+			/ sinf(ukf_filter.state.angles.pitch_y);
+	ukf_filter.state.accy_to_sin_theta = ukf_filter.state.acc.y
+			/ sinf(ukf_filter.state.angles.pitch_y);
+
 	Vector3D_t mag = { (float) magnet->AXIS_X, (float) magnet->AXIS_Y,
 			(float) magnet->AXIS_Z };
 	float magnet_magnitude = math_vec_mag(&mag);
@@ -114,16 +113,16 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	ukf_filter.state.angular_vel.y = (float) gyro->AXIS_Y;
 	ukf_filter.state.angular_vel.z = (float) gyro->AXIS_Z;
 
-	EulerAngle_t gyro_angles = *ahrs_get_euler_derivatives(phi, theta,
+	EulerAngle_t gyro_angle_rates = *ahrs_get_euler_derivatives(phi, theta,
 			ukf_filter.state.angular_vel.x, ukf_filter.state.angular_vel.y,
 			ukf_filter.state.angular_vel.z);
 
 	//to degree
-	ukf_filter.state.gyro_angles.gz = gyro_angles.yaw_z * ukf_filter.dt
+	ukf_filter.state.gyro_angles.gz = gyro_angle_rates.yaw_z * ukf_filter.dt
 			* rad_to_deg();
-	ukf_filter.state.gyro_angles.gy = gyro_angles.pitch_y * ukf_filter.dt
+	ukf_filter.state.gyro_angles.gy = gyro_angle_rates.pitch_y * ukf_filter.dt
 			* rad_to_deg();
-	ukf_filter.state.gyro_angles.gx = gyro_angles.roll_x * ukf_filter.dt
+	ukf_filter.state.gyro_angles.gx = gyro_angle_rates.roll_x * ukf_filter.dt
 			* rad_to_deg();
 
 //	float check_x = get_geo_g() + sinf(theta) * cosf(phi);
