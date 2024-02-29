@@ -79,7 +79,7 @@ float math_variance(int length, float mean, float *data) {
 	for (int i = 0; i < length; i++) {
 		variance += powf(data[i] - mean, 2.0);
 	}
-	return variance / (float) length;
+	return variance / (float) (length - 1);
 }
 
 // standard deviation
