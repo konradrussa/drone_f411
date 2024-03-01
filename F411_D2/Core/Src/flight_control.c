@@ -40,7 +40,7 @@ void flight_imu_calibration(uint32_t last_tick, uint32_t diff_us) {
 	gyro_data[1].AXIS_Y = imu->gyro_data[1].y;
 	gyro_data[1].AXIS_Z = imu->gyro_data[1].z;
 
-	// AG: X north Y East Z Down, M: Y North X East Z Down NWD
+	// AG: X North Y East Z Down, M: Y North X East Z Down NWD
 	mag_data[0].AXIS_X = imu->mag_data[0].y;
 	mag_data[0].AXIS_Y = imu->mag_data[0].x;
 	mag_data[0].AXIS_Z = imu->mag_data[0].z;
@@ -65,8 +65,9 @@ void flight_ahrs() {
 	gyro.AXIS_Y = imu->gyro_data[0].y;
 	gyro.AXIS_Z = imu->gyro_data[0].z;
 
-	mag.AXIS_X = imu->mag_data[0].x;
-	mag.AXIS_Y = imu->mag_data[0].y;
+	// AG: X North Y East Z Down, M: Y North X East Z Down NWD
+	mag.AXIS_X = imu->mag_data[0].y;
+	mag.AXIS_Y = imu->mag_data[0].x;
 	mag.AXIS_Z = imu->mag_data[0].z;
 
 	drone_queue_control();

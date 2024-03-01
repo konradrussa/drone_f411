@@ -75,6 +75,8 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	ukf_filter.state.angles.roll_x = atan2f(ukf_filter.state.acc.y,
 			ukf_filter.state.acc.z); //180
 
+	ukf_filter.state.accy_to_accx = atan2f(ukf_filter.state.acc.y,
+			ukf_filter.state.acc.x);
 	ukf_filter.state.accx_to_sin_theta = ukf_filter.state.acc.x
 			/ sinf(ukf_filter.state.angles.pitch_y);
 	ukf_filter.state.accy_to_sin_theta = ukf_filter.state.acc.y
@@ -87,7 +89,7 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	mag.y /= magnet_magnitude;
 	mag.z /= magnet_magnitude;
 
-	// AG: X north Y East Z Down, M: Y North X East Z Down NWD
+	// AG: X North Y East Z Down, M: Y North X East Z Down NWD
 	float mx = mag.x * cosf(ukf_filter.state.angles.pitch_y)
 			+ mag.z * sinf(ukf_filter.state.angles.pitch_y);
 	float my = mag.y * sinf(ukf_filter.state.angles.roll_x)
@@ -135,7 +137,7 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 
 void estimation_ukf(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 		const AxesRaw_t *magnet) {
-	estimation_ukf_predict();
+	//estimation_ukf_predict();
 	estimation_ukf_update(accel, gyro, magnet);
 }
 

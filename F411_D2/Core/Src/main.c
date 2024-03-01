@@ -158,7 +158,7 @@ int main(void) {
 //collect data
 		last_tick = timer_tim4_us();
 		if (BMI160_OK != imu_get_data()) {
-			return get_imu()->result_data; // TODO handle error and do recovery
+			return get_imu()->result_data; // TODO handle error and do prediction/recovery
 		}
 		diff_us = timer_tim4_diff_us(last_tick);
 // process data
@@ -179,7 +179,7 @@ int main(void) {
 // ahrs
 //		flight_ahrs();
 		diff_sec = timer_rtc_diff_sec(last_rtc);
-		HAL_Delay(300);
+		//HAL_Delay(300);
 	}
 	/* USER CODE END WHILE */
 
