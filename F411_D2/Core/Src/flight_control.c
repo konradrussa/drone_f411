@@ -16,7 +16,7 @@
 AhrsState_t ahrsState;
 AxesRaw_t accel, gyro, mag;
 
-float compass_deg;
+static volatile float heading = 0.0;
 
 inline static float us_to_second() {
 	return 1e-6;
@@ -51,6 +51,7 @@ void flight_imu_calibration(uint32_t last_tick, uint32_t diff_us) {
 	calibration(accel_data, gyro_data, mag_data);
 
 	get_ukf_filter()->dt = diff_us * us_to_second(); // us to second
+	heading = ahrs_get_longitudinal_direction();
 	flight_ukf(accel_data, gyro_data, mag_data);
 }
 
@@ -71,7 +72,6 @@ void flight_ahrs() {
 	mag.AXIS_Z = imu->mag_data[0].z;
 
 	drone_queue_control();
-	compass_deg = ahrs_get_longitudinal_direction();
 	flight_set_parameters();
 	ahrs_fusion_agm(&accel, &gyro, &mag, &ahrsState);
 	quaternion_to_euler(&ahrsState.q, &ahrsState.ea);

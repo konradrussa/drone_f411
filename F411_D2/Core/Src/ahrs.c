@@ -15,8 +15,8 @@ const float ahrs_get_sampling_time() {
 }
 
 //Madgwick AHRS
-void ahrs_fusion_agm(const AxesRaw_t *accel, const AxesRaw_t *gyro, const AxesRaw_t *mag,
-		AhrsState_t *ahrs) {
+void ahrs_fusion_agm(const AxesRaw_t *accel, const AxesRaw_t *gyro,
+		const AxesRaw_t *mag, AhrsState_t *ahrs) {
 
 	float axf, ayf, azf, gxf, gyf, gzf, mxf, myf, mzf;
 	float norm;
@@ -176,17 +176,15 @@ void ahrs_fusion_agm(const AxesRaw_t *accel, const AxesRaw_t *gyro, const AxesRa
 	ahrs->q.q3 = q3;
 }
 
-//TODO check
+//TODO include Z rotation
 float ahrs_get_longitudinal_direction() {
 	IMU_t *imu = get_imu();
 	const float *delta_m = get_magnetic_declination();
-	float longi_degree = atan2f(imu->mag_data[0].x - *delta_m,
-			imu->mag_data[0].y - *delta_m); // tan(y/x)
-	if (longi_degree < 0) {
-		longi_degree += 2 * M_PI;
+	float longi_degree = atan2f(imu->mag_data[0].y - *delta_m, imu->mag_data[0].x - *delta_m); // tan(y/x) - *delta_m
+	if (longi_degree < 0.0) {
+		longi_degree += 2.0 * MAX_RAD;
+	} else if (longi_degree > 2.0 * MAX_RAD) {
+		longi_degree -= 2.0 * MAX_RAD;
 	}
-	if (longi_degree > 2 * M_PI) {
-		longi_degree -= 2 * M_PI;
-	}
-	return longi_degree * 180 / M_PI;
+	return longi_degree * 180.0 / MAX_RAD;
 }

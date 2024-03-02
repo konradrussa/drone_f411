@@ -48,7 +48,7 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 
 	ukf_filter.state.acc.x = (float) accel->AXIS_X;
 	ukf_filter.state.acc.y = (float) accel->AXIS_Y;
-	ukf_filter.state.acc.z = (float) accel->AXIS_Z;
+	ukf_filter.state.acc.z = -(float) accel->AXIS_Z;
 
 	float acc_magnitude = math_vec_mag(&ukf_filter.state.acc);
 	ukf_filter.state.acc.x /= acc_magnitude;
@@ -62,18 +62,18 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 
 	float theta = 2.0
 			* atan2f(asinf(ukf_filter.state.acc.y),
-					acosf(-ukf_filter.state.acc.z)); // 2* 90 , 1* 45
+					acosf(ukf_filter.state.acc.z)); // 2* 90 , 1* 45
 	ukf_filter.state.attitude.x = theta * rad_to_deg();
 
 	float psi = 2.0
 			* atan2f(asinf(ukf_filter.state.acc.x),
-					acosf(-ukf_filter.state.acc.z)); // 2* 90 , 1* 45
+					acosf(ukf_filter.state.acc.z)); // 2* 90 , 1* 45
 	ukf_filter.state.attitude.y = psi * rad_to_deg();
 
 	ukf_filter.state.angles.pitch_y = atan2f(ukf_filter.state.acc.x,
-			ukf_filter.state.acc.z); //180
+			-ukf_filter.state.acc.z); //180
 	ukf_filter.state.angles.roll_x = atan2f(ukf_filter.state.acc.y,
-			ukf_filter.state.acc.z); //180
+			-ukf_filter.state.acc.z); //180
 
 	ukf_filter.state.accy_to_accx = atan2f(ukf_filter.state.acc.y,
 			ukf_filter.state.acc.x);
