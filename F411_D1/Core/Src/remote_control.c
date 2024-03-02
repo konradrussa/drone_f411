@@ -61,7 +61,7 @@ void rc_calculate(uint32_t capturedValue, RemoteControl_t *control,
 			control->difference = diff;
 		}
 		control->captured = false; // reset to first captured
-		__HAL_TIM_SET_COUNTER(htim, 0);  // reset the counter
+		//__HAL_TIM_SET_COUNTER(htim, 0);  // reset the counter
 	}
 }
 

@@ -180,7 +180,8 @@ void ahrs_fusion_agm(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 float ahrs_get_longitudinal_direction() {
 	IMU_t *imu = get_imu();
 	const float *delta_m = get_magnetic_declination();
-	float longi_degree = atan2f(imu->mag_data[0].y - *delta_m, imu->mag_data[0].x - *delta_m); // tan(y/x) - *delta_m
+	float longi_degree = atan2f(imu->mag_data[0].y - *delta_m,
+			imu->mag_data[0].x - *delta_m); // tan(y/x) - *delta_m
 	if (longi_degree < 0.0) {
 		longi_degree += 2.0 * MAX_RAD;
 	} else if (longi_degree > 2.0 * MAX_RAD) {
