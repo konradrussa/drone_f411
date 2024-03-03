@@ -160,10 +160,10 @@ HAL_StatusTypeDef motor_init_dma_dshot(MOTOR_t *motor, TIM_HandleTypeDef *tim,
 }
 
 void motor_start_all() {
-//	motor_pwm(get_M_L1(), get_start_throttle(get_M_L1()));
-//	motor_pwm(get_M_L2(), get_start_throttle(get_M_L2()));
-//	motor_pwm(get_M_R1(), get_start_throttle(get_M_R1()));
-//	motor_pwm(get_M_R2(), get_start_throttle(get_M_R2()));
+	motor_pwm(get_M_L1(), get_start_throttle(get_M_L1()));
+	motor_pwm(get_M_L2(), get_start_throttle(get_M_L2()));
+	motor_pwm(get_M_R1(), get_start_throttle(get_M_R1()));
+	motor_pwm(get_M_R2(), get_start_throttle(get_M_R2()));
 	motor_pwm(get_M_EDF_L1(), get_start_throttle(get_M_EDF_L1()));
 	motor_pwm(get_M_EDF_R1(), get_start_throttle(get_M_EDF_R1()));
 }

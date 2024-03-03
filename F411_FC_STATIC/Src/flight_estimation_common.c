@@ -82,34 +82,37 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	ukf_filter.state.accy_to_sin_theta = ukf_filter.state.acc.y
 			/ sinf(ukf_filter.state.angles.pitch_y);
 
-	Vector3D_t mag = { (float) magnet->AXIS_X, (float) magnet->AXIS_Y,
-			(float) magnet->AXIS_Z };
-	float magnet_magnitude = math_vec_mag(&mag);
-	mag.x /= magnet_magnitude;
-	mag.y /= magnet_magnitude;
-	mag.z /= magnet_magnitude;
+	bool use_magnetometer = (NULL != magnet);
+	if (use_magnetometer) {
+		Vector3D_t mag = { (float) magnet->AXIS_X, (float) magnet->AXIS_Y,
+				(float) magnet->AXIS_Z };
+		float magnet_magnitude = math_vec_mag(&mag);
+		mag.x /= magnet_magnitude;
+		mag.y /= magnet_magnitude;
+		mag.z /= magnet_magnitude;
 
-	// AG: X North Y East Z Down, M: Y North X East Z Down NWD
-	float mx = mag.x * cosf(ukf_filter.state.angles.pitch_y)
-			+ mag.z * sinf(ukf_filter.state.angles.pitch_y);
-	float my = mag.y * sinf(ukf_filter.state.angles.roll_x)
-			* sinf(ukf_filter.state.angles.pitch_y)
-			+ mag.y * cosf(ukf_filter.state.angles.roll_x)
-			- mag.z * sinf(ukf_filter.state.angles.roll_x)
-					* cosf(ukf_filter.state.angles.pitch_y);
+		// AG: X North Y East Z Down, M: Y North X East Z Down NWD
+		float mx = mag.x * cosf(ukf_filter.state.angles.pitch_y)
+				+ mag.z * sinf(ukf_filter.state.angles.pitch_y);
+		float my = mag.y * sinf(ukf_filter.state.angles.roll_x)
+				* sinf(ukf_filter.state.angles.pitch_y)
+				+ mag.y * cosf(ukf_filter.state.angles.roll_x)
+				- mag.z * sinf(ukf_filter.state.angles.roll_x)
+						* cosf(ukf_filter.state.angles.pitch_y);
 
-	ukf_filter.state.angles.yaw_z = atan2f(mx, my); //y is north; (my, mx) - x is north
+		ukf_filter.state.angles.yaw_z = atan2f(mx, my); //y is north; (my, mx) - x is north
 
-	// normalize yaw to -pi .. pi
-	if (ukf_filter.state.angles.yaw_z > MAX_RAD) {
-		ukf_filter.state.angles.yaw_z -= 2.f * MAX_RAD;
-	} else if (ukf_filter.state.angles.yaw_z < -MAX_RAD) {
-		ukf_filter.state.angles.yaw_z += 2.f * MAX_RAD;
+		// normalize yaw to -pi .. pi
+		if (ukf_filter.state.angles.yaw_z > MAX_RAD) {
+			ukf_filter.state.angles.yaw_z -= 2.f * MAX_RAD;
+		} else if (ukf_filter.state.angles.yaw_z < -MAX_RAD) {
+			ukf_filter.state.angles.yaw_z += 2.f * MAX_RAD;
+		}
+		ukf_filter.state.angles.yaw_z *= rad_to_deg();
 	}
 
 	ukf_filter.state.angles.roll_x *= rad_to_deg();
 	ukf_filter.state.angles.pitch_y *= rad_to_deg();
-	ukf_filter.state.angles.yaw_z *= rad_to_deg();
 
 	ukf_filter.state.angular_vel.x = (float) gyro->AXIS_X;
 	ukf_filter.state.angular_vel.y = (float) gyro->AXIS_Y;

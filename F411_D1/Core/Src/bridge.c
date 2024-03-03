@@ -53,13 +53,14 @@ static void bridge_rc_motor_rx_callback(UART_HandleTypeDef *huart) {
 		free(fc_bridge.port->data_in); // deallocate memory
 		fc_bridge.port->data_in = NULL;
 	}
-	// TODO 1 get radio data from queues
-	fc_bridge.port->data_out = bridge_get_queues_data();
+	// get radio data from queues
+	char *data = bridge_get_queues_data();
+	fc_bridge.port->data_out = data;
 
 	// TODO process Servo channel GEAR
 	HAL_StatusTypeDef status_transmit = fc_bridge.port->transmit(); // send radio data of motors to flight controller D2
-	free(fc_bridge.port->data_out);
-	fc_bridge.port->data_out = NULL;
+	free(data);
+	data = NULL;
 	if (HAL_OK != status_transmit) {
 		raise(bridge_get_transmit_sigint());
 	}
@@ -113,8 +114,11 @@ HAL_StatusTypeDef bridge_init(UART_HandleTypeDef *uart, I2C_HandleTypeDef *i2c) 
 
 HAL_StatusTypeDef bridge_drone_arm() {
 	// TODO signal to arm escs, get radio data from RC, sent TPRY+Gear+Speed
+	char *data = bridge_get_queues_data();
 	fc_bridge.port->data_out = "1100;1100;1923;1098;1919;1919;";
 	HAL_StatusTypeDef status_transmit = fc_bridge.port->transmit(); //send radio data to flight controller
+	free(data);
+	data = NULL;
 	if (HAL_OK != status_transmit) {
 		return status_transmit;
 	}

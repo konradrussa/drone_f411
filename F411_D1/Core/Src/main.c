@@ -175,19 +175,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 
 //	bridge_drone_arm();
+	last_rtc = timer_rtc_sec();
 	while (1) {
 		last_tick = timer_tim4_us();
-		last_rtc = timer_rtc_sec();
+
 //		if (get_imu()->running) { // RECOVERY MODE
 //			flight_recovery();
 //		}
 
-		if (timer_tim4_diff_us(last_tick) > 2000) {
-			char *data = bridge_get_queues_data();
-
-			free(data);
-			data = NULL;
-		}
 		diff_us = timer_tim4_diff_us(last_tick);
 		diff_sec = timer_rtc_diff_sec(last_rtc);
 
