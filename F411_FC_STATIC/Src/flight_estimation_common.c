@@ -178,6 +178,6 @@ void estimation_blue(const float time[3], const Vector3D_t observations) {
 	matrix_vector_product(&blue_model, &xhat, &result);
 }
 
-UKF_t* get_ukf_filter() {
+inline UKF_t* get_ukf_filter() {
 	return &ukf_filter;
 }

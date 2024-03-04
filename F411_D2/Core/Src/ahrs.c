@@ -10,7 +10,7 @@ extern float beta;
 extern const float COE_DPS_TO_RADPS;
 extern volatile float q0, q1, q2, q3;
 
-const float ahrs_get_sampling_time() {
+inline const float ahrs_get_sampling_time() {
 	return SENSOR_SAMPLING_TIME;
 }
 

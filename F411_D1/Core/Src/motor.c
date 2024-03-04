@@ -220,7 +220,7 @@ inline bool get_dma_dshot_motor(MOTOR_t *motor) {
 	return atomic_load_explicit(&motor->dma_dshot, *get_memory_order());
 }
 
-inline HAL_StatusTypeDef motor_deinit(MOTOR_t *motor) {
+HAL_StatusTypeDef motor_deinit(MOTOR_t *motor) {
 	if (get_dma_dshot_motor(motor)) {
 		HAL_StatusTypeDef status = HAL_TIM_PWM_Stop_DMA(motor->pwm_tim,
 				motor->pwm_channel);

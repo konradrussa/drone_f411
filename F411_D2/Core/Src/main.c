@@ -111,14 +111,14 @@ int main(void) {
 	/* USER CODE BEGIN 2 */
 
 // STATUS
-//	HAL_StatusTypeDef status = HAL_OK;
+	HAL_StatusTypeDef status = HAL_OK;
 // PRE-INIT
 	pre_init();
 
 // Initialize Bridge
-//	if (HAL_OK != (status = bridge_init(&huart2))) {
-//		return status;
-//	}
+	if (HAL_OK != (status = bridge_init(&huart2))) {
+		return status;
+	}
 
 // Initialize IMU = ACCEL + GYRO + MAGNETOMETER
 	if (BMI160_OK != imu_init(&htim10, &hi2c1)) {
@@ -152,6 +152,8 @@ int main(void) {
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
+
+// main loop
 	last_rtc = timer_rtc_sec();
 	while (1) {
 

@@ -22,10 +22,6 @@ inline static bool queue_empty(Queue_t *queue) {
 	return (queue->pW == queue->pR);
 }
 
-inline bool queue_data_available(Queue_t *queue) {
-	return (queue->pW > queue->pR);
-}
-
 bool queue_enqueue(Queue_t *queue, uint32_t data) {
 	if (queue_full(queue)) {
 		return false;

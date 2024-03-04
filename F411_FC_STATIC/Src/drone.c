@@ -7,17 +7,11 @@
 
 #include "drone.h"
 
-//input variables/channels
-static float throttle_s = 0.0, roll_s = 0.0, pitch_s = 0.0, yaw_s = 0.0,
-		gear_s = 0.0, speed_s = 0.0;
-
-static Queue_t queues_rc[6];
-
 //constants
 const float drone_whole_mass = 4.5;
-const float front_area = 0.1; //0.3^2 + 0.01
+const float drone_front_area = 0.1; //0.3^2 + 0.01
 const float drone_center_mass = 4.0; // drone mass kg with 2 EDF, center mass 4 kg and 6 side rotors each 100g
-const float motor_mass = 0.1;
+const float drone_motor_mass = 0.1;
 const float l = 0.2; // 0.20 * 2 * sin(30) no-perpendicular distance to axes, Quad 500, 50 cm drone
 const float Ixx = 0.024; // Moments of Inertia, calculations based on paper written by Randal Beard
 const float Iyy = 0.032;
@@ -32,9 +26,14 @@ const THRUST_MAP_t thrust_map = { { 0.1, 0.047 }, { 0.2, 0.063 },
 		{ 0.3, 0.094 }, { 0.4, 0.125 }, { 0.5, 0.188 }, { 0.6, 0.25 }, { 0.7,
 				0.38 }, { 0.8, 0.50 }, { 0.9, 0.75 }, { 1.0, 1.0 } }; //startup power of BlHeliS
 
-const uint32_t RC_CHANNELS_MAX = 1919;
-const uint32_t RC_CHANNELS_MID = 1508;
-const uint32_t RC_CHANNELS_MIN = 1097;
+//TPRYGS
+const RADIO_MAP_t radio_map = { { 1102, 1502, 1933 }, { 1104, 1517, 1932 }, {
+		1104, 1517, 1932 }, { 1104, 1518, 1932 }, { 1962, 1542, 1121 }, { 1931,
+		1518, 1104 } }; // radio signal ranges
+
+const uint32_t RC_CHANNELS_MAX = 1933;
+const uint32_t RC_CHANNELS_MID = 1517;
+const uint32_t RC_CHANNELS_MIN = 1102;
 
 const uint32_t MOTOR_EDF_MAX = 2000;
 const uint32_t MOTOR_EDF_MIN = 1400; //+21
@@ -65,68 +64,12 @@ float interpolate(float throttle) {
 	return result;
 }
 
-void drone_queue_control() {
-	uint32_t data;
-	if (queue_data_available(get_throttle_queue_rc())) {
-		queue_dequeue(get_throttle_queue_rc(), &data);
-		throttle_s = ((float) data / (float) get_rc_channel_max()); // normalize between 0 and 1
-		throttle_s = interpolate(throttle_s);
-	}
-	if (queue_data_available(get_pitch_queue_rc())) {
-		queue_dequeue(get_pitch_queue_rc(), &data);
-		pitch_s = -map(data, get_rc_channel_min(), get_rc_channel_max(), -10,
-				10);
-	}
-	if (queue_data_available(get_roll_queue_rc())) {
-		queue_dequeue(get_roll_queue_rc(), &data);
-		roll_s = -map(roll_s, get_rc_channel_min(), get_rc_channel_max(), -10,
-				10);
-	}
-	if (queue_data_available(get_yaw_queue_rc())) {
-		queue_dequeue(get_yaw_queue_rc(), &data);
-		yaw_s = map(yaw_s, get_rc_channel_min(), get_rc_channel_max(), -180,
-				180);
-	}
-	if (queue_data_available(get_gear_queue_rc())) {
-		queue_dequeue(get_gear_queue_rc(), &data);
-		gear_s = (float) data;
-	}
-	if (queue_data_available(get_speed_queue_rc())) {
-		queue_dequeue(get_speed_queue_rc(), &data);
-		speed_s = (float) data;
-	}
-}
-
-inline Queue_t* get_throttle_queue_rc() {
-	return &queues_rc[0];
-}
-
-inline Queue_t* get_pitch_queue_rc() {
-	return &queues_rc[1];
-}
-
-inline Queue_t* get_roll_queue_rc() {
-	return &queues_rc[2];
-}
-
-inline Queue_t* get_yaw_queue_rc() {
-	return &queues_rc[3];
-}
-
-inline Queue_t* get_gear_queue_rc() {
-	return &queues_rc[4];
-}
-
-inline Queue_t* get_speed_queue_rc() {
-	return &queues_rc[5];
-}
-
-inline Queue_t* get_queues_rc() {
-	return queues_rc;
-}
-
 inline const THRUST_MAP_t* get_thrust_map() {
 	return &thrust_map;
+}
+
+inline const RADIO_MAP_t* get_radio_map() {
+	return &radio_map;
 }
 
 inline const uint32_t get_rc_channel_max() {
@@ -161,6 +104,6 @@ inline const float get_drone_whole_mass() {
 	return drone_whole_mass;
 }
 
-inline const float get_front_area() {
-	return front_area;
+inline const float get_drone_front_area() {
+	return drone_front_area;
 }

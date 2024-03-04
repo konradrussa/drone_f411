@@ -20,7 +20,6 @@ typedef struct Queue {
 	atomic_uint q[QUEUE_SIZE];
 } Queue_t;
 
-bool queue_data_available(Queue_t *queue);
 bool queue_enqueue(Queue_t *queue, uint32_t data);
 bool queue_dequeue(Queue_t *queue, uint32_t *data);
 

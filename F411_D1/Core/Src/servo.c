@@ -34,11 +34,11 @@ static void servo_swap() {
 	}
 }
 
-static void servo_store_dma(bool value) {
+inline static void servo_store_dma(bool value) {
 	atomic_store_explicit(&servo.dma_mode, value, *get_memory_order());
 }
 
-static void servo_store_cruise(bool value) {
+inline static void servo_store_cruise(bool value) {
 	atomic_store_explicit(&servo.cruise, value, *get_memory_order());
 }
 

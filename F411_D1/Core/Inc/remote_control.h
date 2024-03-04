@@ -11,6 +11,7 @@
 #include "tim.h"
 #include "gpio.h"
 #include "drone.h"
+#include "queue.h"
 
 typedef struct RemoteControl {
 	uint32_t rc_channel;
@@ -32,6 +33,12 @@ void rc_pitch_callback(TIM_HandleTypeDef *htim);
 void rc_roll_callback(TIM_HandleTypeDef *htim);
 void rc_yaw_callback(TIM_HandleTypeDef *htim);
 void rc_calculate(uint32_t capturedValue, RemoteControl_t *control,
-		TIM_HandleTypeDef *htim, Queue_t *queue);
+		TIM_HandleTypeDef *htim, uint32_t *rc);
+uint32_t* get_throttle_rc(void);
+uint32_t* get_pitch_rc(void);
+uint32_t* get_roll_rc(void);
+uint32_t* get_yaw_rc(void);
+uint32_t* get_gear_rc(void);
+uint32_t* get_speed_rc(void);
 
 #endif /* INC_REMOTE_CONTROL_H_ */

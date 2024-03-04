@@ -22,11 +22,11 @@ void init_timers_tim4_rtc() {
 	RTC->ISR &= ~(1U << 7); //INIT clear
 }
 
-uint32_t timer_tim4_us() {
+inline  uint32_t timer_tim4_us() {
 	return TIM4->CNT;
 }
 
-uint32_t timer_rtc_sec() {
+inline uint32_t timer_rtc_sec() {
 	return RTC->TR;
 }
 
@@ -39,6 +39,6 @@ uint32_t timer_tim4_diff_us(uint32_t last_tick) {
 	}
 }
 
-uint32_t timer_rtc_diff_sec(uint32_t last_sec) {
+inline uint32_t timer_rtc_diff_sec(uint32_t last_sec) {
 	return timer_rtc_sec() - last_sec;
 }

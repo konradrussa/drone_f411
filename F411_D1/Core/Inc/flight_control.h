@@ -14,8 +14,10 @@
 #include "calibration.h"
 #include "remote_control.h"
 
-void flight_imu_calibration(void);
+void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us);
 void flight_ahrs(void);
 void flight_recovery(void);
+void flight_data_control(const uint32_t *radio_channels,
+		const uint32_t *motors_pwm);
 
 #endif /* INC_FLIGHT_CONTROL_H_ */

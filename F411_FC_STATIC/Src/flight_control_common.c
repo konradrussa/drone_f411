@@ -94,7 +94,7 @@ static void velocity_position_kinematics() {
 static void update_mp_fun(struct MpControl *control) {
 	mpVar.control = control;
 	float gravity_force = get_drone_whole_mass() * get_geo_g();
-	float base_drag_force = 1.0 / 2.0 * get_ro() * get_front_area()
+	float base_drag_force = 1.0 / 2.0 * get_ro() * get_drone_front_area()
 			* drag_coefficience; // * v^2 * uv
 
 	Matrix3D_t *rot_mat = matrix_get_rotation_matrix(control->angles.roll_x,
@@ -129,23 +129,27 @@ static void update_mp_fun(struct MpControl *control) {
 	}
 }
 
-PidVariable_t* flight_get_pid_var() {
+inline float us_to_second() {
+	return 1e-6;
+}
+
+inline PidVariable_t* flight_get_pid_var() {
 	return &pidVar;
 }
 
-SmVariable_t* flight_get_sm_var() {
+inline SmVariable_t* flight_get_sm_var() {
 	return &smVar;
 }
 
-MpVariable_t* flight_get_mp_var() {
+inline MpVariable_t* flight_get_mp_var() {
 	return &mpVar;
 }
 
-struct MpControl* flight_get_mp_control() {
+inline struct MpControl* flight_get_mp_control() {
 	return &control;
 }
 
-void flight_set_parameters() {
+inline void flight_set_parameters() {
 	if (gTHR < MIN_THROTTLE_ONESHOT42) {
 		ahrs_kp = AHRS_KP_BIG;
 	} else {

@@ -13,7 +13,8 @@
 #include "drone.h"
 #include "calibration.h"
 
-void flight_imu_calibration(uint32_t last_tick, uint32_t diff_us);
+void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us);
 void flight_ahrs(void);
+void flight_data_control(const uint32_t *radio_channels, uint32_t *motors_pwm);
 
 #endif /* INC_FLIGHT_CONTROL_H_ */

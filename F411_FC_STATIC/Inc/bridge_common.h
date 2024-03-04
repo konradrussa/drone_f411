@@ -33,5 +33,12 @@ const short bridge_get_transmit_sigint(void);
 const short bridge_get_receive_sigint(void);
 const char* bridge_get_space(void);
 const char* bridge_get_semicolon(void);
+const char* bridge_get_sequence(void);
+void bridge_fill_sequence(char *data);
+const int bridge_get_sequence_length(void);
+uint32_t* bridge_get_motor_commands(void);
+const int bridge_get_motors_number(void); //6 + servo = 7
+uint32_t* bridge_get_radio_commands(void);
+const int bridge_get_radio_channels_number(void); //4 + 2 = 6
 
 #endif /* BRIDGE_COMMON_H_ */
