@@ -32,7 +32,7 @@ inline uint32_t timer_rtc_sec() {
 
 uint32_t timer_tim4_diff_us(uint32_t last_tick) {
 	uint32_t now_tick = timer_tim4_us();
-	if (now_tick > last_tick) {
+	if (now_tick >= last_tick) {
 		return now_tick - last_tick;
 	} else {
 		return now_tick + (TIM4->ARR - last_tick); //0xffff changed to 0x3E8 = 1000 - 1 ms

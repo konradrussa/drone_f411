@@ -13,6 +13,15 @@
 #include "drone.h"
 #include "calibration.h"
 
+typedef struct FLIGHT_INPUT {
+	float throttle;
+	float pitch;
+	float roll;
+	float yaw;
+	float gear;
+	float speed;
+} FLIGHT_INPUT_t;
+
 void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us);
 void flight_ahrs(void);
 void flight_data_control(const uint32_t *radio_channels, uint32_t *motors_pwm);

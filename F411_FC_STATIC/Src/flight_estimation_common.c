@@ -22,11 +22,18 @@ inline static float rad_to_deg() {
 
 static void estimation_ukf_predict() {
 
-	ukf_filter.state.attitude.x += ukf_filter.state.angular_vel.x
+	ukf_filter.state.gyro_angle_rates.gx += ukf_filter.state.angular_vel.x
 			* ukf_filter.dt;
-	ukf_filter.state.attitude.y += ukf_filter.state.angular_vel.y
+	ukf_filter.state.gyro_angle_rates.gy += ukf_filter.state.angular_vel.y
 			* ukf_filter.dt;
-	ukf_filter.state.attitude.z += ukf_filter.state.angular_vel.z
+	ukf_filter.state.gyro_angle_rates.gz += ukf_filter.state.angular_vel.z
+			* ukf_filter.dt;
+
+	ukf_filter.state.gyro_angles.gx += ukf_filter.state.gyro_angle_rates.gx
+			* ukf_filter.dt;
+	ukf_filter.state.gyro_angles.gy += ukf_filter.state.gyro_angle_rates.gy
+			* ukf_filter.dt;
+	ukf_filter.state.gyro_angles.gz += ukf_filter.state.gyro_angle_rates.gz
 			* ukf_filter.dt;
 
 	ukf_filter.state.vel.x += ukf_filter.state.acc.x * ukf_filter.dt;
@@ -118,17 +125,17 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	ukf_filter.state.angular_vel.y = (float) gyro->AXIS_Y;
 	ukf_filter.state.angular_vel.z = (float) gyro->AXIS_Z;
 
-	EulerAngle_t gyro_angle_rates = *ahrs_get_euler_derivatives(phi, theta,
+	ukf_filter.state.gyro_angle_rates = *ahrs_get_euler_derivatives(phi, theta,
 			ukf_filter.state.angular_vel.x, ukf_filter.state.angular_vel.y,
 			ukf_filter.state.angular_vel.z);
 
 	//to degree
-	ukf_filter.state.gyro_angles.gz = gyro_angle_rates.yaw_z * ukf_filter.dt
-			* rad_to_deg();
-	ukf_filter.state.gyro_angles.gy = gyro_angle_rates.pitch_y * ukf_filter.dt
-			* rad_to_deg();
-	ukf_filter.state.gyro_angles.gx = gyro_angle_rates.roll_x * ukf_filter.dt
-			* rad_to_deg();
+	ukf_filter.state.gyro_angles.gz = ukf_filter.state.gyro_angle_rates.gz
+			* ukf_filter.dt * rad_to_deg();
+	ukf_filter.state.gyro_angles.gy = ukf_filter.state.gyro_angle_rates.gy
+			* ukf_filter.dt * rad_to_deg();
+	ukf_filter.state.gyro_angles.gx = ukf_filter.state.gyro_angle_rates.gx
+			* ukf_filter.dt * rad_to_deg();
 
 //	float check_x = get_geo_g() + sinf(theta) * cosf(phi);
 //	//assert(accel->x == check_x);
@@ -140,7 +147,7 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 
 void estimation_ukf(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 		const AxesRaw_t *magnet) {
-	//estimation_ukf_predict();
+	estimation_ukf_predict();
 	estimation_ukf_update(accel, gyro, magnet);
 }
 

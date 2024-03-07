@@ -174,12 +174,11 @@ int main(void) {
 	/* USER CODE BEGIN WHILE */
 
 // wait for arming
-	while (!bridge_get_armed()) {
-		status = bridge_drone_arm();
+	while (!bridge_is_arming()) {
+		status = bridge_drone_arming();
 		if (HAL_OK != status) {
 			return status;
 		}
-		HAL_Delay(100);
 	}
 
 // main loop
@@ -197,9 +196,7 @@ int main(void) {
 		}
 
 		diff_us = timer_tim4_diff_us(last_tick);
-		diff_sec = timer_rtc_diff_sec(last_rtc);
 
-//		break;
 //		if (servo_get_cruise()) { // FIXME alternate without while/delay
 //			break;
 //		}
@@ -207,11 +204,11 @@ int main(void) {
 //		if (HAL_BUSY == status) {
 //			HAL_Delay(100);
 //		}
-
-		/* USER CODE END WHILE */
-
-		/* USER CODE BEGIN 3 */
+		diff_sec = timer_rtc_diff_sec(last_rtc);
 	}
+	/* USER CODE END WHILE */
+
+	/* USER CODE BEGIN 3 */
 
 // Vtol SERVO
 //	if (HAL_OK != (status = servo_vtol_vehicle())) { //DMA
@@ -219,7 +216,6 @@ int main(void) {
 //	}
 //	while (servo_get_cruise()) // FIXME alternate without while/delay
 //		;
-
 // Deinitialize MOTOR //one method and check what init
 //	status = motor_deinit(get_M_L1());
 //	status = motor_deinit(get_M_L2());

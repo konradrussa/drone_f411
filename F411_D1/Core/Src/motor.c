@@ -149,7 +149,7 @@ HAL_StatusTypeDef motor_init_dma_dshot(MOTOR_t *motor, TIM_HandleTypeDef *tim,
 	uint16_t data_size = sizeof(uint32_t) * DSHOT_SENT_SIZE;
 	motor->buffer = (uint32_t*) malloc(data_size);
 	HAL_StatusTypeDef status = HAL_TIM_PWM_Start_DMA(motor->pwm_tim,
-			motor->pwm_channel, motor->buffer, data_size); //TODO CHECK was sizeof(motor->buffer) buffer[18]
+			motor->pwm_channel, motor->buffer, data_size);
 	if (HAL_OK == status) {
 		store_dma_dshot(motor, true);
 		motor_store_started(motor, true);

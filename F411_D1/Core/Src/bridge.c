@@ -9,27 +9,27 @@
 #include "remote_control.h"
 #include "flight_control.h"
 
-// THROTTLE, PITCH, ROLL, YAW, GEAR, SPEED
-static volatile bool arming = false; // radio joy-sticks down to center + D and F \ /
-const int arming_sequence_radio_approx[6] =
-		{ 1200, 1200, 1900, 1200, 1900, 1900 }; //"1100;1100;1923;1098;1919;1919;"
+static bool is_arming = false;
 
 BRIDGE_COMMON_t fc_port =
 		{ .signalStatusTransmit = 0, .signalStatusReceive = 0 };
 static BRIDGE_t fc_bridge = { .port = &fc_port };
 
-static bool bridge_check_arming() {
-	return (*bridge_get_radio_commands() < arming_sequence_radio_approx[0])
-			&& (*(bridge_get_radio_commands() + 1)
-					< arming_sequence_radio_approx[1])
-			&& (*(bridge_get_radio_commands() + 2)
-					> arming_sequence_radio_approx[2])
-			&& (*(bridge_get_radio_commands() + 3)
-					< arming_sequence_radio_approx[3])
-			&& (*(bridge_get_radio_commands() + 4)
-					> arming_sequence_radio_approx[4])
-			&& (*(bridge_get_radio_commands() + 5)
-					> arming_sequence_radio_approx[5]);
+static bool is_armed = false;
+
+// THROTTLE, PITCH, ROLL, YAW, GEAR, SPEED
+// "1100;1100;1923;1098;1919;1919;"
+// arming - radio joy-sticks down to center + D and F \ /
+const int arming_sequence_radio[6] = { 1200, 1200, 1900, 1200, 1900, 1900 };
+
+static bool bridge_check_radio_arming() {
+	uint32_t *radio_cmds = bridge_get_radio_commands();
+	return (radio_cmds[0] < arming_sequence_radio[0])
+			&& (radio_cmds[1] < arming_sequence_radio[1])
+			&& (radio_cmds[2] > arming_sequence_radio[2])
+			&& (radio_cmds[3] < arming_sequence_radio[3])
+			&& (radio_cmds[4] > arming_sequence_radio[4])
+			&& (radio_cmds[5] > arming_sequence_radio[5]);
 }
 
 inline static void bridge_store_armed(bool value) {
@@ -70,7 +70,7 @@ static void bridge_signal_receive_handler(int status) {
 }
 
 // process in bridge rx callback
-static void bridge_motor_control(char *data) {
+static void bridge_fc_feedback(char *data) {
 	int i = 0;
 	char *saveptr = NULL;
 	const char *pBufferStart = strtok_r(data, bridge_get_semicolon(), &saveptr);
@@ -83,16 +83,13 @@ static void bridge_motor_control(char *data) {
 
 static char* bridge_get_radio_data() {
 	char *uart_data = (char*) malloc(BRIDGE_DATA_SIZE_OUT + 1);
-	uint32_t *radio_channel = bridge_get_radio_commands();
+	uint32_t *radio_cmds = bridge_get_radio_commands();
 	char char_data;
 	const int seq_len = bridge_get_sequence_length();
 	for (int i = 0; i < bridge_get_radio_channels_number(); i++) {
-		itoa(radio_channel[i], &char_data, 10);
+		itoa(radio_cmds[i], &char_data, 10);
 		bridge_fill_sequence(&char_data);
 		strncpy(uart_data + i * seq_len, bridge_get_sequence(), seq_len);
-	}
-	if (!arming) {
-		arming = bridge_check_arming();
 	}
 	uart_data[BRIDGE_DATA_SIZE_OUT] = '\0';
 	return uart_data;
@@ -100,46 +97,45 @@ static char* bridge_get_radio_data() {
 
 static void bridge_rc_motor_rx_callback(UART_HandleTypeDef *huart) {
 	bool data_valid = bridge_validate_data((char*) fc_bridge.rx_data,
-			BRIDGE_DATA_SIZE_IN);
+	BRIDGE_DATA_SIZE_IN);
 	if (data_valid) {
-		bridge_motor_control((char*) fc_bridge.rx_data);
-		// TODO 2 set to motors
+		bridge_fc_feedback((char*) fc_bridge.rx_data);
 		flight_data_control(bridge_get_radio_commands(),
 				bridge_get_motor_commands());
 	}
-	// get radio data from queues
-	char *data = bridge_get_radio_data();
-	fc_bridge.port->data_out = data;
-
-	// TODO process Servo channel GEAR
-	HAL_StatusTypeDef status_transmit = fc_bridge.port->transmit(); // send radio data of motors to flight controller D2
-	free(data);
-	data = NULL;
-	if (HAL_OK != status_transmit) {
+	// get radio data from radio commands
+	fc_bridge.port->data_out = bridge_get_radio_data();
+	if (HAL_OK != fc_bridge.port->transmit()) { // send radio data of motors to flight controller D2
 		raise(bridge_get_transmit_sigint());
 	}
-	HAL_StatusTypeDef status_receive = fc_bridge.port->receive();
-	if (HAL_OK != status_receive) {
+	if (HAL_OK != fc_bridge.port->receive()) {
 		raise(bridge_get_receive_sigint());
 	}
+	if (!is_armed) {
+		if (bridge_check_fc_arming()) {
+			is_armed = true;
+			bridge_store_armed(true);
+		}
+	}
+	free(fc_bridge.port->data_out);
+	fc_bridge.port->data_out = NULL;
 }
 
-HAL_StatusTypeDef bridge_drone_arm() {
-	// TODO signal to arm escs, get radio data from RC, sent TPRY+Gear+Speed
+HAL_StatusTypeDef bridge_drone_arming() {
+	// signal to arm escs, get radio data from RC, sent TPRY+Gear+Speed
 	HAL_StatusTypeDef status = HAL_OK;
-	char *data = bridge_get_radio_data();
-	if (arming) {
-		fc_bridge.port->data_out = data;
+	fc_bridge.port->data_out = bridge_get_radio_data();
+	if (bridge_check_radio_arming()) {
 		status = fc_bridge.port->transmit(); //send radio data to flight controller
 		if (HAL_OK == status) {
 			status = fc_bridge.port->receive();
 		}
 		if (HAL_OK == status) {
-			bridge_store_armed(true);
+			is_arming = true;
 		}
 	}
-	free(data);
-	data = NULL;
+	free(fc_bridge.port->data_out);
+	fc_bridge.port->data_out = NULL;
 	return status;
 }
 
@@ -172,4 +168,8 @@ HAL_StatusTypeDef bridge_transmit(char *data) {
 
 inline bool bridge_get_armed() {
 	return atomic_load_explicit(&fc_bridge.armed, *get_memory_order());
+}
+
+inline bool bridge_is_arming() {
+	return is_arming;
 }

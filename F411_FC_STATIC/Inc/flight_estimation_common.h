@@ -18,16 +18,11 @@ struct UKF_State {
 	EulerAngle_t angles;
 	Vector3D_t attitude; //orientation
 	GyroRad_t gyro_angles;
+	GyroRad_t gyro_angle_rates;
 	Vector3D_t angular_vel;
 	float accy_to_accx;
 	float accx_to_sin_theta;
 	float accy_to_sin_theta;
-};
-
-struct UKF_Measurement {
-	Vector3D_t acc;
-	Vector3D_t gyro;
-	Vector3D_t mag;
 };
 
 struct UKF_Covariance {
@@ -38,7 +33,6 @@ struct UKF_Covariance {
 
 typedef struct UKF {
 	struct UKF_State state;
-	struct UKF_Measurement measurement;
 	struct UKF_Covariance covariance;
 	float dt;
 } UKF_t;

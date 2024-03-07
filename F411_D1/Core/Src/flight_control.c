@@ -14,8 +14,7 @@ AxesRaw_t accel, gyro;
 
 //input variables/motors
 // L1, L2, R1, R2, EDF_L1, EDF_R1, SERVO
-static uint32_t m_l1_s = 0.0, m_l2_s = 0.0, m_r1_s = 0.0, m_r2_s = 0.0,
-		m_edf_l1_s = 0.0, m_edf_r1_s = 0.0, servo_s = 0.0;
+static FLIGHT_INPUT_t flight_input = { 0, 0, 0, 0, 0, 0, 0 };
 
 void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us) {
 	IMU_t *imu = get_imu();
@@ -54,14 +53,14 @@ void flight_ahrs() {
 	quaternion_to_euler(&ahrsState.q, &ahrsState.ea);
 }
 
-void flight_data_control(const uint32_t *radio_channels, const uint32_t *motors_pwm) {
-	m_l1_s = motors_pwm[0];
-	m_l2_s = motors_pwm[1];
-	m_r1_s = motors_pwm[2];
-	m_r2_s = motors_pwm[3];
-	m_edf_l1_s = motors_pwm[4];
-	m_edf_r1_s = motors_pwm[5];
-	servo_s = motors_pwm[6];
+void flight_data_control(const uint32_t *radio_cmds, const uint32_t *motor_cmds) {
+	flight_input.m_l1 = motor_cmds[0];
+	flight_input.m_l2 = motor_cmds[1];
+	flight_input.m_r1 = motor_cmds[2];
+	flight_input.m_r2 = motor_cmds[3];
+	flight_input.m_edf_l1 = motor_cmds[4];
+	flight_input.m_edf_r1 = motor_cmds[5];
+	flight_input.servo = motor_cmds[6];
 	//TODO set to motors
 }
 

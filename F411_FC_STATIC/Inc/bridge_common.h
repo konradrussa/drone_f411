@@ -40,5 +40,7 @@ uint32_t* bridge_get_motor_commands(void);
 const int bridge_get_motors_number(void); //6 + servo = 7
 uint32_t* bridge_get_radio_commands(void);
 const int bridge_get_radio_channels_number(void); //4 + 2 = 6
+bool bridge_check_fc_arming(void);
+
 
 #endif /* BRIDGE_COMMON_H_ */

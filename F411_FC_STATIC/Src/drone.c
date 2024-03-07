@@ -31,10 +31,6 @@ const RADIO_MAP_t radio_map = { { 1102, 1502, 1933 }, { 1104, 1517, 1932 }, {
 		1104, 1517, 1932 }, { 1104, 1518, 1932 }, { 1962, 1542, 1121 }, { 1931,
 		1518, 1104 } }; // radio signal ranges
 
-const uint32_t RC_CHANNELS_MAX = 1933;
-const uint32_t RC_CHANNELS_MID = 1517;
-const uint32_t RC_CHANNELS_MIN = 1102;
-
 const uint32_t MOTOR_EDF_MAX = 2000;
 const uint32_t MOTOR_EDF_MIN = 1400; //+21
 
@@ -70,18 +66,6 @@ inline const THRUST_MAP_t* get_thrust_map() {
 
 inline const RADIO_MAP_t* get_radio_map() {
 	return &radio_map;
-}
-
-inline const uint32_t get_rc_channel_max() {
-	return RC_CHANNELS_MAX;
-}
-
-inline const uint32_t get_rc_channel_mid() {
-	return RC_CHANNELS_MID;
-}
-
-inline const uint32_t get_rc_channel_min() {
-	return RC_CHANNELS_MIN;
 }
 
 inline const uint32_t get_motor_edf_max() {

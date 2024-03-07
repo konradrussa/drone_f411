@@ -24,6 +24,21 @@ const int motors_number = sizeof(motor_commands) / sizeof(motor_commands[0]);
 static char sequence[5];
 const int sequence_length = sizeof(sequence) / sizeof(sequence[0]);
 
+// L1, L2, R1, R2, EDF_L1, EDF_R1, SERVO
+// "4200;4200;4200;4200;1400;1400;0075;"
+const int arming_sequence_fc[7] = { 4200, 4200, 4200, 4200, 1400, 1400, 75 };
+
+bool bridge_check_fc_arming() {
+	// signal to arm escs, get motor data from FC, sent 4os42, 2edf, 1servo
+	return (motor_commands[0] == arming_sequence_fc[0])
+			&& (motor_commands[1] == arming_sequence_fc[1])
+			&& (motor_commands[2] == arming_sequence_fc[2])
+			&& (motor_commands[3] == arming_sequence_fc[3])
+			&& (motor_commands[4] == arming_sequence_fc[4])
+			&& (motor_commands[5] == arming_sequence_fc[5])
+			&& (motor_commands[6] == arming_sequence_fc[6]);
+}
+
 // "1097;1919;1508;1508;1919;"
 bool bridge_validate_data(char *s, int size) {
 	int length = strlen(s);

@@ -25,7 +25,8 @@ typedef struct BRIDGE {
 
 HAL_StatusTypeDef bridge_init(UART_HandleTypeDef *uart, I2C_HandleTypeDef *i2c);
 HAL_StatusTypeDef bridge_transmit(char *data);
-HAL_StatusTypeDef bridge_drone_arm(void);
+HAL_StatusTypeDef bridge_drone_arming(void);
+bool bridge_is_arming(void);
 bool bridge_get_armed(void);
 
 #endif /* INC_BRIDGE_H_ */

@@ -21,8 +21,7 @@ static volatile float heading = 0.0;
 static volatile bool armed = false;
 
 //input variables/channels
-static float throttle_s = 0.0, roll_s = 0.0, pitch_s = 0.0, yaw_s = 0.0,
-		gear_s = 0.0, speed_s = 0.0;
+static FLIGHT_INPUT_t flight_input = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
 // process in main for FC training
 void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us) {
@@ -79,34 +78,37 @@ void flight_ahrs() {
 }
 
 //"4200;4200;4200;4200;1400;1400;0075;" arming
-void flight_data_control(const uint32_t *radio_channels, uint32_t *motors_pwm) {
-	throttle_s = ((float) radio_channels[0] / (float) get_rc_channel_max()); // normalize between 0 and 1
-	throttle_s = interpolate(throttle_s);
-	pitch_s = -map(radio_channels[1], get_rc_channel_min(),
-			get_rc_channel_max(), -10, 10);
-	roll_s = -map(radio_channels[2], get_rc_channel_min(), get_rc_channel_max(),
-			-10, 10);
-	yaw_s = map(radio_channels[3], get_rc_channel_min(), get_rc_channel_max(),
-			-180, 180);
-	gear_s = radio_channels[4];
-	speed_s = radio_channels[5];
+void flight_data_control(const uint32_t *radio_cmds, uint32_t *motor_cmds) {
+	const RADIO_MAP_t *radio_limits = get_radio_map();
+	flight_input.throttle = interpolate(
+			(float) radio_cmds[0] / (float) (*radio_limits)[0][2]); // normalize between 0 and 1 and interpolate
+	flight_input.pitch = -map((float) radio_cmds[1], (*radio_limits)[1][0],
+			(*radio_limits)[1][2], -10, 10);
+	flight_input.roll = -map((float) radio_cmds[2], (*radio_limits)[2][0],
+			(*radio_limits)[2][2], -10, 10);
+	flight_input.yaw = map((float) radio_cmds[3], (*radio_limits)[3][0],
+			(*radio_limits)[3][2], -180, 180);
+	flight_input.gear = map((float) radio_cmds[4], (*radio_limits)[4][0],
+			(*radio_limits)[4][2], 2, 0);
+	flight_input.speed = map((float) radio_cmds[5], (*radio_limits)[5][0],
+			(*radio_limits)[5][2], 2, 0);
 
 	if (!armed) {
-		motors_pwm[0] = 4200;
-		motors_pwm[1] = 4200;
-		motors_pwm[2] = 4200;
-		motors_pwm[3] = 4200;
-		motors_pwm[4] = 1400;
-		motors_pwm[5] = 1400;
-		motors_pwm[6] = 75;
+		motor_cmds[0] = 4200;
+		motor_cmds[1] = 4200;
+		motor_cmds[2] = 4200;
+		motor_cmds[3] = 4200;
+		motor_cmds[4] = 1400;
+		motor_cmds[5] = 1400;
+		motor_cmds[6] = 75;
 		armed = true;
 	} else {
-		motors_pwm[0] = 0;
-		motors_pwm[1] = 0;
-		motors_pwm[2] = 0;
-		motors_pwm[3] = 0;
-		motors_pwm[4] = 0;
-		motors_pwm[5] = 0;
-		motors_pwm[6] = 0;
+		motor_cmds[0] = radio_cmds[0];
+		motor_cmds[1] = radio_cmds[1];
+		motor_cmds[2] = radio_cmds[2];
+		motor_cmds[3] = radio_cmds[3];
+		motor_cmds[4] = radio_cmds[4];
+		motor_cmds[5] = radio_cmds[5];
+		motor_cmds[6] = 0;
 	}
 }
