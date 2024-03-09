@@ -26,8 +26,8 @@ typedef struct FLIGHT_INPUT {
 
 void flight_radio_calibration(void);
 void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us);
-void flight_ahrs(void);
-void flight_recovery(void);
+void flight_ahrs(const uint32_t last_tick, const uint32_t diff_us);
+void flight_recovery(const uint32_t last_tick, const uint32_t diff_us);
 void flight_data_control(const uint32_t *radio_cmds, const uint32_t *motor_cmds);
 
 #endif /* INC_FLIGHT_CONTROL_H_ */

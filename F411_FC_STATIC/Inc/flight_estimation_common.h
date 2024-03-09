@@ -39,7 +39,7 @@ typedef struct UKF {
 
 //Kalman filter
 void estimation_ukf(const AxesRaw_t *accel, const AxesRaw_t *gyro,
-		const AxesRaw_t *magnet);
+		const AxesRaw_t *magnet, const float diff_us);
 UKF_t* get_ukf_filter();
 
 //BLUE estimate

@@ -42,5 +42,8 @@ Vector3D_t* ahrs_get_weighted_average(const AxesWeightedAverage_t *avg1,
 		const AxesWeightedAverage_t *avg2);
 void ahrs_eigen(const Matrix3D_t *matrix, const Vector3D_t *vector,
 		Eigen_t *eigen);
+float constrain(float input, float negative_min, float positive_max);
+float us_to_second();
+float rad_to_deg();
 
 #endif /* AHRS_COMMON_H_ */

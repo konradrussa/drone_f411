@@ -306,7 +306,7 @@ void calibration(const AxesRaw_t *accel_data, const AxesRaw_t *gyro_data,
 
 }
 
-void radio_calibration() {
+void calibration_radio() {
 
 	uint32_t *radio_channels = bridge_get_radio_commands();
 

@@ -109,6 +109,6 @@ typedef struct IMU_Measurement_3D {
 void calibration(const AxesRaw_t *accel_data, const AxesRaw_t *gyro_data,
 		const AxesRaw_t *mag_data);
 
-void radio_calibration(void);
+void calibration_radio(void);
 
 #endif // CALIBRATION_H

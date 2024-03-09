@@ -179,3 +179,19 @@ void ahrs_fusion_ag(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 	ahrs->q.q2 = q2;
 	ahrs->q.q3 = q3;
 }
+
+float constrain(float input, float negative_min, float positive_max) {
+	if (input < negative_min)
+		return negative_min;
+	if (input > positive_max)
+		return positive_max;
+	return input;
+}
+
+inline float us_to_second() {
+	return 1e-6;
+}
+
+inline float rad_to_deg() {
+	return 180.0 / MAX_RAD;
+}

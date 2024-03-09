@@ -43,14 +43,6 @@ struct MpControl control = { 0.0, 0.0, 0.0, { 0.0, 0.0, 0.0 } };
 static MpVariable_t mpVar = { { { 0.0, 0.0, 0.0 }, { 0.0, 0.0, 0.0 }, { 0.0,
 		0.0, 0.0 } }, 0.0, &control, &update_mp_fun };
 
-static float constrain(float input, float negative_min, float positive_max) {
-	if (input < negative_min)
-		return negative_min;
-	if (input > positive_max)
-		return positive_max;
-	return input;
-}
-
 static float differentiate(void) {
 	return (pidVar.error_p - pidVar.prev_error); // / pidVar.dt;
 }
@@ -127,10 +119,6 @@ static void update_mp_fun(struct MpControl *control) {
 			velocity_position_kinematics();
 		}
 	}
-}
-
-inline float us_to_second() {
-	return 1e-6;
 }
 
 inline PidVariable_t* flight_get_pid_var() {

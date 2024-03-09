@@ -52,7 +52,6 @@ typedef struct MpVariable {
 } MpVariable_t;
 
 void flight_set_parameters(void);
-float us_to_second();
 PidVariable_t* flight_get_pid_var(void);
 SmVariable_t* flight_get_sm_var(void);
 MpVariable_t* flight_get_mp_var(void);

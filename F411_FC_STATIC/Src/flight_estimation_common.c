@@ -16,10 +16,6 @@
 
 static UKF_t ukf_filter;
 
-inline static float rad_to_deg() {
-	return 180.0 / MAX_RAD;
-}
-
 static void estimation_ukf_predict() {
 
 	ukf_filter.state.gyro_angle_rates.gx += ukf_filter.state.angular_vel.x
@@ -146,7 +142,8 @@ static void estimation_ukf_update(const AxesRaw_t *accel, const AxesRaw_t *gyro,
 }
 
 void estimation_ukf(const AxesRaw_t *accel, const AxesRaw_t *gyro,
-		const AxesRaw_t *magnet) {
+		const AxesRaw_t *magnet, const float diff_us) {
+	ukf_filter.dt = diff_us * us_to_second(); // us to second
 	estimation_ukf_predict();
 	estimation_ukf_update(accel, gyro, magnet);
 }

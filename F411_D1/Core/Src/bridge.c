@@ -124,8 +124,8 @@ static void bridge_rc_motor_rx_callback(UART_HandleTypeDef *huart) {
 HAL_StatusTypeDef bridge_drone_arming() {
 	// signal to arm escs, get radio data from RC, sent TPRY+Gear+Speed
 	HAL_StatusTypeDef status = HAL_OK;
-	fc_bridge.port->data_out = bridge_get_radio_data();
 	if (bridge_check_radio_arming()) {
+		fc_bridge.port->data_out = bridge_get_radio_data();
 		status = fc_bridge.port->transmit(); //send radio data to flight controller
 		if (HAL_OK == status) {
 			status = fc_bridge.port->receive();
@@ -133,9 +133,9 @@ HAL_StatusTypeDef bridge_drone_arming() {
 		if (HAL_OK == status) {
 			is_arming = true;
 		}
+		free(fc_bridge.port->data_out);
+		fc_bridge.port->data_out = NULL;
 	}
-	free(fc_bridge.port->data_out);
-	fc_bridge.port->data_out = NULL;
 	return status;
 }
 

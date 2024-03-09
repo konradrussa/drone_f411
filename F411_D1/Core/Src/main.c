@@ -189,7 +189,8 @@ int main(void) {
 		if (get_imu()->running) { // RECOVERY MODE
 			if (BMI160_OK == imu_get_data()) {
 				flight_imu_calibration(last_tick, diff_us);
-				flight_recovery();
+				flight_ahrs(last_tick, diff_us);
+				flight_recovery(last_tick, diff_us);
 			} else {
 				//second recovery
 			}

@@ -11,6 +11,7 @@
 #include "ahrs_common.h"
 #include "basic_math.h"
 
-void flight_ukf(const AxesRaw_t *accel, const AxesRaw_t *gyro);
+void flight_ukf(const AxesRaw_t *accel, const AxesRaw_t *gyro,
+		const float diff_us);
 
 #endif /* SRC_FLIGHT_ESTIMATION_H_ */

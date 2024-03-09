@@ -17,7 +17,7 @@ AxesRaw_t accel, gyro;
 static FLIGHT_INPUT_t flight_input = { 0, 0, 0, 0, 0, 0, 0 };
 
 void flight_radio_calibration() {
-	radio_calibration();
+	calibration_radio();
 }
 
 void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us) {
@@ -38,11 +38,9 @@ void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us) {
 	gyro_data[1].AXIS_Z = imu->gyro_data[1].z;
 
 	calibration(accel_data, gyro_data, NULL);
-	get_ukf_filter()->dt = diff_us * us_to_second(); // us to second
-	flight_ukf(accel_data, gyro_data);
 }
 
-void flight_ahrs() {
+void flight_ahrs(const uint32_t last_tick, const uint32_t diff_us) {
 	IMU_t *imu = get_imu();
 	accel.AXIS_X = imu->accel_data[0].x;
 	accel.AXIS_Y = imu->accel_data[0].y;
@@ -55,6 +53,7 @@ void flight_ahrs() {
 	flight_set_parameters();
 	ahrs_fusion_ag(&accel, &gyro, &ahrsState);
 	quaternion_to_euler(&ahrsState.q, &ahrsState.ea);
+	flight_ukf(&accel, &gyro, diff_us);
 }
 
 void flight_data_control(const uint32_t *radio_cmds, const uint32_t *motor_cmds) {
@@ -68,6 +67,6 @@ void flight_data_control(const uint32_t *radio_cmds, const uint32_t *motor_cmds)
 	//TODO set to motors
 }
 
-void flight_recovery() {
+void flight_recovery(const uint32_t last_tick, const uint32_t diff_us) {
 	// TODO radio + ahrs + motor control
 }

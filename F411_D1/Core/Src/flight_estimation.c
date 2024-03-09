@@ -8,6 +8,7 @@
 #include "flight_estimation.h"
 #include "flight_estimation_common.h"
 
-void flight_ukf(const AxesRaw_t *accel, const AxesRaw_t *gyro) {
-	estimation_ukf(accel, gyro, NULL);
+void flight_ukf(const AxesRaw_t *accel, const AxesRaw_t *gyro,
+		const float diff_us) {
+	estimation_ukf(accel, gyro, NULL, diff_us);
 }

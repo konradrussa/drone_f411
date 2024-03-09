@@ -50,14 +50,10 @@ void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us) {
 	mag_data[1].AXIS_Z = imu->mag_data[1].z;
 
 	calibration(accel_data, gyro_data, mag_data);
-
-	get_ukf_filter()->dt = diff_us * us_to_second(); // us to second
-	heading = ahrs_get_longitudinal_direction();
-	flight_ukf(accel_data, gyro_data, mag_data);
 }
 
 // process in main
-void flight_ahrs() {
+void flight_ahrs(const uint32_t last_tick, const uint32_t diff_us) {
 	IMU_t *imu = get_imu();
 	accel.AXIS_X = imu->accel_data[0].x;
 	accel.AXIS_Y = imu->accel_data[0].y;
@@ -75,6 +71,8 @@ void flight_ahrs() {
 	flight_set_parameters();
 	ahrs_fusion_agm(&accel, &gyro, &mag, &ahrsState);
 	quaternion_to_euler(&ahrsState.q, &ahrsState.ea);
+	heading = ahrs_get_longitudinal_direction();
+	flight_ukf(&accel, &gyro, &mag, diff_us);
 }
 
 //"4200;4200;4200;4200;1400;1400;0075;" arming
