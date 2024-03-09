@@ -16,6 +16,8 @@ Noise_IMU_t imu_noise = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 		0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 Noise_GPS_t gps_noise = { 0.0, 0.0 };
 
+RADIO_Calibration_t rc_calibration = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
 static int iteration = 0;
 
 //static void calculate_imu_stddev() {
@@ -302,4 +304,55 @@ void calibration(const AxesRaw_t *accel_data, const AxesRaw_t *gyro_data,
 	calibration_imu_measurements(accel_data, gyro_data, mag_data);
 	calibration_imu_noise(accel_data, gyro_data, mag_data);
 
+}
+
+void radio_calibration() {
+
+	uint32_t *radio_channels = bridge_get_radio_commands();
+
+	bool has_data = radio_channels[0] != 0 && radio_channels[1] != 0
+			&& radio_channels[2] != 0 && radio_channels[3] != 0
+			&& radio_channels[4] != 0 && radio_channels[5] != 0;
+
+	if (has_data) {
+		if (rc_calibration.throttle_max == 0) {
+			rc_calibration.throttle_max = rc_calibration.throttle_min =
+					radio_channels[0];
+			rc_calibration.pitch_max = rc_calibration.pitch_min =
+					radio_channels[1];
+			rc_calibration.roll_max = rc_calibration.roll_min =
+					radio_channels[2];
+			rc_calibration.yaw_max = rc_calibration.yaw_min = radio_channels[3];
+			rc_calibration.gear_max = rc_calibration.gear_min =
+					radio_channels[4];
+			rc_calibration.speed_max = rc_calibration.speed_min =
+					radio_channels[5];
+		} else {
+			rc_calibration.throttle_max = math_max(rc_calibration.throttle_max,
+					radio_channels[0]);
+			rc_calibration.throttle_min = math_min(rc_calibration.throttle_min,
+					radio_channels[0]);
+			rc_calibration.pitch_max = math_max(rc_calibration.pitch_max,
+					radio_channels[1]);
+			rc_calibration.pitch_min = math_min(rc_calibration.pitch_min,
+					radio_channels[1]);
+			rc_calibration.roll_max = math_max(rc_calibration.roll_max,
+					radio_channels[2]);
+			rc_calibration.roll_min = math_min(rc_calibration.roll_min,
+					radio_channels[2]);
+			rc_calibration.yaw_max = math_max(rc_calibration.yaw_max,
+					radio_channels[3]);
+			rc_calibration.yaw_min = math_min(rc_calibration.yaw_min,
+					radio_channels[3]);
+			rc_calibration.gear_max = math_max(rc_calibration.gear_max,
+					radio_channels[4]);
+			rc_calibration.gear_min = math_min(rc_calibration.gear_min,
+					radio_channels[4]);
+			rc_calibration.speed_max = math_max(rc_calibration.speed_max,
+					radio_channels[5]);
+			rc_calibration.speed_min = math_min(rc_calibration.speed_min,
+					radio_channels[5]);
+		}
+
+	}
 }

@@ -27,9 +27,9 @@ const THRUST_MAP_t thrust_map = { { 0.1, 0.047 }, { 0.2, 0.063 },
 				0.38 }, { 0.8, 0.50 }, { 0.9, 0.75 }, { 1.0, 1.0 } }; //startup power of BlHeliS
 
 //TPRYGS
-const RADIO_MAP_t radio_map = { { 1102, 1502, 1933 }, { 1104, 1517, 1932 }, {
-		1104, 1517, 1932 }, { 1104, 1518, 1932 }, { 1962, 1542, 1121 }, { 1931,
-		1518, 1104 } }; // radio signal ranges
+const RADIO_MAP_t radio_map = { { 1096, 1502, 1925 }, { 1096, 1517, 1924 }, {
+		1096, 1517, 1924 }, { 1096, 1518, 1924 }, { 1955, 1542, 1113 }, { 1925,
+		1518, 1096 } }; // radio signal ranges
 
 const uint32_t MOTOR_EDF_MAX = 2000;
 const uint32_t MOTOR_EDF_MIN = 1400; //+21

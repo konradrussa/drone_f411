@@ -16,6 +16,10 @@ AxesRaw_t accel, gyro;
 // L1, L2, R1, R2, EDF_L1, EDF_R1, SERVO
 static FLIGHT_INPUT_t flight_input = { 0, 0, 0, 0, 0, 0, 0 };
 
+void flight_radio_calibration() {
+	radio_calibration();
+}
+
 void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us) {
 	IMU_t *imu = get_imu();
 	AxesRaw_t accel_data[2], gyro_data[2];

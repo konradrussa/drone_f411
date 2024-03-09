@@ -24,6 +24,7 @@ typedef struct FLIGHT_INPUT {
 	uint32_t servo;
 } FLIGHT_INPUT_t;
 
+void flight_radio_calibration(void);
 void flight_imu_calibration(const uint32_t last_tick, const uint32_t diff_us);
 void flight_ahrs(void);
 void flight_recovery(void);
