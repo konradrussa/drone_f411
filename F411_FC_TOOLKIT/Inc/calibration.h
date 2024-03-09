@@ -9,6 +9,7 @@
 
 #include "basic_math.h"
 #include "ahrs_common.h"
+#include "bridge_common.h"
 
 #define SAMPLE_SIZE		(50)
 
@@ -84,6 +85,21 @@ typedef struct IMU_Calibration_3D {
 	Calibration_3D_t mag;
 } IMU_Calibration_3D_t;
 
+typedef struct RADIO_Calibration {
+	int16_t throttle_max;
+	int16_t throttle_min;
+	int16_t pitch_max;
+	int16_t pitch_min;
+	int16_t roll_max;
+	int16_t roll_min;
+	int16_t yaw_max;
+	int16_t yaw_min;
+	int16_t gear_max;
+	int16_t gear_min;
+	int16_t speed_max;
+	int16_t speed_min;
+} RADIO_Calibration_t;
+
 typedef struct IMU_Measurement_3D {
 	Measurement_3D_t accel;
 	Measurement_3D_t gyro;
@@ -92,5 +108,7 @@ typedef struct IMU_Measurement_3D {
 
 void calibration(const AxesRaw_t *accel_data, const AxesRaw_t *gyro_data,
 		const AxesRaw_t *mag_data);
+
+void radio_calibration(void);
 
 #endif // CALIBRATION_H

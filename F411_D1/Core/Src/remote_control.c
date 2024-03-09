@@ -44,7 +44,7 @@ void rc_calculate(uint32_t capturedValue, RemoteControl_t *control,
 			control->frame_width_us = capturedValue + control->difference;
 			if (control->frame_width_us > RC_FRAME_MIN
 					&& control->frame_width_us < RC_FRAME_MAX) {
-				*rc = control->width_us;
+				*rc = control->width_us; // confirm
 			}
 			control->fall = 0; 				// reset fall
 			control->frame_width_us = 0;	// reset frame width
@@ -61,6 +61,7 @@ void rc_calculate(uint32_t capturedValue, RemoteControl_t *control,
 			control->width_us = diff * TIM_FACTOR_US; // calculate pulse width
 			control->frequency = RC_TIMCLOCK / diff; 	// calculate frequency
 			control->difference = diff;
+			*rc = control->width_us; // set when captured
 		}
 		control->captured = false; // reset to first captured
 		//__HAL_TIM_SET_COUNTER(htim, 0);  // reset the counter

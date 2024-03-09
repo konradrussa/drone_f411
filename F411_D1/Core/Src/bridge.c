@@ -74,9 +74,9 @@ static void bridge_fc_feedback(char *data) {
 	int i = 0;
 	char *saveptr = NULL;
 	const char *pBufferStart = strtok_r(data, bridge_get_semicolon(), &saveptr);
-	uint32_t *motors = bridge_get_motor_commands();
+	uint32_t *motor_cmds = bridge_get_motor_commands();
 	while (pBufferStart != NULL) {
-		motors[i++] = atoi(pBufferStart);
+		motor_cmds[i++] = atoi(pBufferStart);
 		pBufferStart = strtok_r(NULL, bridge_get_semicolon(), &saveptr);
 	}
 }
@@ -166,10 +166,10 @@ HAL_StatusTypeDef bridge_transmit(char *data) {
 	return status;
 }
 
-inline bool bridge_get_armed() {
-	return atomic_load_explicit(&fc_bridge.armed, *get_memory_order());
-}
-
 inline bool bridge_is_arming() {
 	return is_arming;
+}
+
+inline bool bridge_get_armed() {
+	return atomic_load_explicit(&fc_bridge.armed, *get_memory_order());
 }

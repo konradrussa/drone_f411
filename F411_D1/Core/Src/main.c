@@ -194,7 +194,7 @@ int main(void) {
 				//second recovery
 			}
 		}
-
+		flight_radio_calibration();
 		diff_us = timer_tim4_diff_us(last_tick);
 
 //		if (servo_get_cruise()) { // FIXME alternate without while/delay
