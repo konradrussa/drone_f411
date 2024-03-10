@@ -10,7 +10,7 @@
 void init_timers_tim4_rtc() {
 //TIM4 INIT
 	__HAL_RCC_TIM4_CLK_ENABLE();
-	TIM4->PSC = HAL_RCC_GetPCLK1Freq() / 100 - 1;
+//	TIM4->PSC = 100 - 1;
 	TIM4->CR1 = TIM_CR1_CEN;
 
 //RTC INIT
